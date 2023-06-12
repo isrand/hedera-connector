@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "buildDockerImage": "nest build && docker build -t localhost:5000/hedera-connector:1.0.0 .",
+    "generateKyberKeys": "node examples/kyber/generate-keys.js",
     "push": "docker push localhost:5000/hedera-connector:1.0.0",
     "start": "helm upgrade --install hedera-connector ./chart --set settings.local=true --wait",
     "stop": "helm delete hedera-connector",

@@ -1,4 +1,4 @@
-# Hedera Hashgraph Testnet Connector Microservice
+# Hedera Hashgraph Testnet Connector
 
 This repository contains a NestJS API server to simplify integration with the Hedera Hashgraph Testnet.
 
@@ -37,22 +37,22 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 > If you don't have a Hedera Hashgraph Testnet account you can create one [here](https://portal.hedera.com/register).
 
-The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and an RSA private key to perform transactions and queries on the network. To boostrap your Hedera Connector with your information, you need to fill in the secret `chart/templates/secrets/credentials.yaml`.
+The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network. To boostrap your Hedera Connector with your information, you need to fill in the secret `chart/templates/secrets/credentials.yaml`.
 
 You can find your Hedera Account information [in the Hedera Portal](https://portal.hedera.com) - use the DER-encoded keys.
-You can create a single line, base64-encoded RSA private key using the following command:
+You can create the necessary Crystals-Kyber private and public keys by running:
 
 ```bash
-openssl genrsa 2048 | base64 | tr -d \\n
+npm run generateKyberKeys
 ```
+
+This will output the public and private keys in base64 encoding. 
 
 > **Warning**
 > If you want to contribute to this repository and you have filled in the credentials secret, make sure to remove it from the worktree so you don't accidentally push your data:
-
-
-```bash
-git update-index --skip-worktree chart/templates/secrets/credentials.yaml
-```
+> ```bash
+> git update-index --skip-worktree chart/templates/secrets/credentials.yaml
+> ```
 
 
 ## Installation
