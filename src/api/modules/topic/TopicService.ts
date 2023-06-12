@@ -226,12 +226,13 @@ export class TopicService {
   }
 
   public async getMessageFromEncryptedTopic(topicId: string, sequenceNumber: number): Promise<string | unknown> {
-    if (TopicManager.hasTopic(topicId)) {
-      return TopicManager.getTopicConfiguration(topicId);
-    }
 
     // Topic configuration message
     if (sequenceNumber === 1) {
+      if (TopicManager.hasTopic(topicId)) {
+        return TopicManager.getTopicConfiguration(topicId);
+      }
+
       const firstTopicMessage: IGetMessageFromTopicResponse = await this.hederaStub.getMessageFromTopic(topicId, 1);
 
       const base64EncodedEncryptedTopicConfigurationMessage: string = Buffer.from(firstTopicMessage.contents.buffer).toString('base64');
@@ -241,7 +242,11 @@ export class TopicService {
       const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
 
       // Decrypt topic configuration message with my private key
-      return Crypto.adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+      const decryptedTopicConfigurationMessage: ITopicConfiguration = Crypto.adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+
+      TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
+
+      return decryptedTopicConfigurationMessage;
     }
 
     const getMessageFromTopicResponse: IGetMessageFromTopicResponse = await this.hederaStub.getMessageFromTopic(topicId, sequenceNumber);
