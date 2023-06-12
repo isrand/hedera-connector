@@ -14,7 +14,7 @@ import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
 import {HederaClient} from '../../../hedera/client/HederaClient';
 import {Wallet} from '../../../wallet/Wallet';
 import {Configuration} from '../../../configuration/Configuration';
-import {Crypto} from '../../../utils/crypto/Crypto';
+import {Crypto} from '../../../crypto/Crypto';
 
 @Injectable()
 export class TopicService {

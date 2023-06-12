@@ -2,7 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './AppModule';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {Configuration} from './configuration/Configuration';
-import {Crypto} from './utils/crypto/Crypto';
+import {Crypto} from './crypto/Crypto';
 import {Wallet} from './wallet/Wallet';
 
 export class Main {

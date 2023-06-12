@@ -1,12 +1,12 @@
 /* eslint-disable */
 // ESLint will complain a lot in this file because of Kyber.
-import {ITopicConfiguration} from '../../../api/modules/topic/interfaces/ITopicConfiguration';
-import {Configuration} from '../../../configuration/Configuration';
-import {IEncryptedTopicMessage} from '../../../api/modules/topic/interfaces/IEncryptedTopicMessage';
-import {ITopicMessage} from '../../../api/modules/topic/interfaces/ITopicMessage';
+import {ITopicConfiguration} from '../../api/modules/topic/interfaces/ITopicConfiguration';
+import {Configuration} from '../../configuration/Configuration';
+import {IEncryptedTopicMessage} from '../../api/modules/topic/interfaces/IEncryptedTopicMessage';
+import {ITopicMessage} from '../../api/modules/topic/interfaces/ITopicMessage';
 import {ICryptoAdapter} from './interfaces/ICryptoAdapter';
-import {ITopicParticipant} from '../../../api/modules/topic/interfaces/ITopicParticipant';
-import {IEncryptedTopicConfiguration} from '../../../api/modules/topic/interfaces/IEncryptedTopicConfiguration';
+import {ITopicParticipant} from '../../api/modules/topic/interfaces/ITopicParticipant';
+import {IEncryptedTopicConfiguration} from '../../api/modules/topic/interfaces/IEncryptedTopicConfiguration';
 import * as crypto from 'crypto';
 import {Timestamp} from '@hashgraph/sdk';
 

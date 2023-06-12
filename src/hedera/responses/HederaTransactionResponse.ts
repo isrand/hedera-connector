@@ -16,15 +16,11 @@ export class HederaTransactionResponse {
   public constructor(private readonly hederaTransactionResponse: Readonly<IHederaTransactionResponse>) { }
 
   public parse(): IHederaConnectorResponse {
-    if (!this.hederaTransactionResponse.isMock) {
-      return {
-        response: this.parseTransactionResponse(this.hederaTransactionResponse.response),
-        receipt: this.parseTransactionReceipt(this.hederaTransactionResponse.receipt),
-        record: this.parseTransactionRecord(this.hederaTransactionResponse.record)
-      };
-    }
-
-    return this.hederaTransactionResponse as IHederaConnectorResponse;
+    return {
+      response: this.parseTransactionResponse(this.hederaTransactionResponse.response),
+      receipt: this.parseTransactionReceipt(this.hederaTransactionResponse.receipt),
+      record: this.parseTransactionRecord(this.hederaTransactionResponse.record)
+    };
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types

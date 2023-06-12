@@ -18,7 +18,7 @@ export class EncryptedTopicController {
 While it's still a publicly accessible topic, the contents of the messages are encrypted and will be nonsensical to everyone
 except for the topic participants.\n
 Upon creation, participants need to be explicitly added to the topic configuration message (the first message in the topic,
-akin to a Hyperledger Fabric Channel Configuration block). Their RSA public key is used to encrypt the configuration message
+akin to a Hyperledger Fabric Channel Configuration block). Their Kyber public key is used to encrypt the configuration message
 and any subsequent messages in the topic, ensuring that messages can only be decrypted by using their private key.
 `
   })

@@ -236,8 +236,7 @@ export class HederaStub implements IHederaStub {
     return {
       response: response,
       receipt: receipt,
-      record: record,
-      isMock: false
+      record: record
     };
   }
 }

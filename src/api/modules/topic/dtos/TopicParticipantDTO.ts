@@ -11,7 +11,7 @@ export class TopicParticipantDTO implements ITopicParticipant {
 
   @ApiProperty({
     required: true,
-    description: 'Base64-encoded RSA public key used for encryption',
+    description: 'Base64-encoded Kyber public key used for encryption',
     example: '1nwcSfQif8fF3Pq3mHwL+XOFPuKPPHhwKSy8gBUiyGgJdYw8nTSfpbq8XaHBqwtOxzRDl2mInjddBqnK9eJCdliN/2ODRFwIttxnXgcv+2eBRgZtPGaLOoYIJ6KvJUQJ...'
   })
   public kyberPublicKey!: string;
