@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hedera-connector
+  labels:
+    component: hedera-connector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: hedera-connector
+  template:
+    metadata:
+      labels:
+        component: hedera-connector
+    spec:
+      volumes:
+        - name: wallet
+          emptyDir: {}
+      containers:
+        - name: hedera-connector
+          image: localhost:5000/hedera-connector:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: HEDERA_ACCOUNT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: hedera_account_id
+            - name: HEDERA_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: hedera_public_key
+            - name: HEDERA_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: hedera_private_key
+            - name: KYBER_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: kyber_private_key
+            - name: KYBER_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: kyber_public_key
+            - name: WALLET_TYPE
+              value: {{ .Values.wallet.type }}
+            - name: ENCRYPTION_ALGORITHM
+              value: {{ .Values.encryption.algorithm }}
+            - name: HEDERA_NETWORK
+              value: testnet
+          ports:
+            - containerPort: 4000
+          volumeMounts:
+            - name: wallet
+              mountPath: /opt/wallet

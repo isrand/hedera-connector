@@ -1,0 +1,11 @@
+settings:
+  local: true
+
+encryption:
+  algorithm: kyber
+
+wallet:
+  type: filesystem # "couchdb" or "filesystem"
+  couchdb:
+    username:
+    password:
