@@ -11,7 +11,6 @@ import {IGetMessageFromTopicResponse} from './responses/IGetMessageFromTopicResp
 import {TopicManager} from './support/TopicManager';
 import {ITopicParticipant} from './interfaces/ITopicParticipant';
 import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
-import {HederaClient} from '../../../hedera/client/HederaClient';
 import {Wallet} from '../../../wallet/Wallet';
 import {Crypto} from '../../../crypto/Crypto';
 import {ITopicMessage} from './interfaces/ITopicMessage';
@@ -23,7 +22,7 @@ export class TopicService {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor() {
-    this.hederaStub = new HederaStub(new HederaClient());
+    this.hederaStub = new HederaStub();
   }
 
   /*

@@ -5,7 +5,6 @@ import {HederaStub} from '../../../hedera/stub/HederaStub';
 import {TopicService} from './TopicService';
 import {GatewayGetTopicMessages} from './dtos/GatewayGetTopicMessages';
 import * as Long from 'long';
-import {HederaClient} from '../../../hedera/client/HederaClient';
 import {TopicManager} from './support/TopicManager';
 
 /*
@@ -18,7 +17,7 @@ export class TopicGateway {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor(private readonly topicService: TopicService) {
-    this.hederaStub = new HederaStub(new HederaClient());
+    this.hederaStub = new HederaStub();
   }
 
   @SubscribeMessage('topic_messages')
@@ -29,7 +28,7 @@ export class TopicGateway {
     }).setStartTime(0);
 
     topicMessageQuery.subscribe(
-      this.hederaStub.getClient().client,
+      this.hederaStub.client,
       // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
       (error: TopicMessage) => {
         clientSocket.emit('topic_error', JSON.stringify(error));
@@ -50,7 +49,7 @@ export class TopicGateway {
     }).setStartTime(0);
 
     topicMessageQuery.subscribe(
-      this.hederaStub.getClient().client,
+      this.hederaStub.client,
       // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
       (error: TopicMessage) => {
         clientSocket.emit('encrypted_topic_error', JSON.stringify(error));
