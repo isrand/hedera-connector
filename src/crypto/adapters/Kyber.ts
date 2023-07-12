@@ -172,7 +172,7 @@ export class Kyber implements ICryptoAdapter {
       }
     }
 
-    throw new Error('Could not decrypt topic configuration message.');
+    throw new Error('Could not decrypt topic configuration message. Does the account have access?');
   }
 
   public decryptTopicMessage(encryptedTopicMessage: IEncryptedTopicMessage, consensusTimeStamp: Timestamp, sequenceNumber: number): ITopicMessage {
@@ -222,6 +222,6 @@ export class Kyber implements ICryptoAdapter {
       }
     }
 
-    throw new Error('Could not decrypt topic message.');
+    throw new Error('Could not decrypt topic message. Does the account have access?');
   }
 }
