@@ -1,0 +1,13 @@
+hedera:
+  account:
+    id:
+    # DER-encoded keys provided by Hedera
+    public_key:
+    private_key:
+
+wallet:
+  # "couchdb" or "filesystem"
+  type:
+  couchdb:
+    username:
+    password:

@@ -2,16 +2,12 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './AppModule';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {Configuration} from './configuration/Configuration';
-import {Crypto} from './crypto/Crypto';
 import {Wallet} from './wallet/Wallet';
 
 export class Main {
   public async bootstrap(): Promise<void> {
     // Initialize the node wallet depending on the configuration passed via environment variables
-    Wallet.initializeProvider(Configuration.walletType);
-
-    // Initialize the Crypto suite with the chosen encryption algorithm
-    Crypto.initializeAdapter(Configuration.encryptionAlgorithm);
+    Wallet.initialize(Configuration.walletType);
 
     // Initialize application
     const app = await NestFactory.create(AppModule);

@@ -1,9 +1,14 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {TopicParticipantDTO} from './TopicParticipantDTO';
-import {HederaConnectorRequestDTO} from '../../../common/dto/HederaConnectorRequestDTO';
-import {Configuration} from '../../../../configuration/Configuration';
 
-export class CreateEncryptedTopicDTO extends HederaConnectorRequestDTO {
+export class CreateEncryptedTopicDTO {
+  @ApiProperty({
+    required: true,
+    description: 'Topic encryption size: 512-bit, 768 or 1024',
+    example: 512
+  })
+  public encryptionSize!: number;
+
   @ApiProperty({
     required: true,
     description: 'Topic name',
@@ -17,8 +22,8 @@ export class CreateEncryptedTopicDTO extends HederaConnectorRequestDTO {
     description: 'Array of topic participants',
     example: [
       {
-        hederaPublicKey: Configuration.hederaPublicKey,
-        kyberPublicKey: Configuration.kyberPublicKey
+        hederaPublicKey: '',
+        kyberPublicKey: ''
       }
     ]
   })

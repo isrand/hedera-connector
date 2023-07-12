@@ -1,9 +1,14 @@
 const kyber = require('crystals-kyber');
+const fs = require('fs');
 
-const publicKey_privateKey = kyber.KeyGen1024();
-const publicKey = publicKey_privateKey[0];
-const privateKey = publicKey_privateKey[1];
+const keys_512 = kyber.KeyGen512();
+fs.writeFileSync('chart/artifacts/kyber_512.pub', Buffer.from(keys_512[0]).toString('base64'));
+fs.writeFileSync('chart/artifacts/kyber_512.priv', Buffer.from(keys_512[1]).toString('base64'));
 
-console.log(Buffer.from(publicKey).toString('base64'));
-console.log('-----')
-console.log(Buffer.from(privateKey).toString('base64'));
+const keys_768 = kyber.KeyGen768();
+fs.writeFileSync('chart/artifacts/kyber_768.pub', Buffer.from(keys_768[0]).toString('base64'));
+fs.writeFileSync('chart/artifacts/kyber_768.priv', Buffer.from(keys_768[1]).toString('base64'));
+
+const keys_1024 = kyber.KeyGen1024();
+fs.writeFileSync('chart/artifacts/kyber_1024.pub', Buffer.from(keys_1024[0]).toString('base64'));
+fs.writeFileSync('chart/artifacts/kyber_1024.priv', Buffer.from(keys_1024[1]).toString('base64'));

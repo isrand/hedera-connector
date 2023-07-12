@@ -8,6 +8,7 @@ import {Timestamp} from '@hashgraph/sdk';
 import {ITopicMessage} from '../../../api/modules/topic/interfaces/ITopicMessage';
 
 export interface ICryptoAdapter {
+  generateKeyPair: () => any;
   encryptMessage: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string) => Readonly<IEncryptedTopicMessage>;
   encryptTopicConfiguraton: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string, submitKey: string) => Readonly<IEncryptedTopicConfiguration>;
   decryptTopicConfigurationMessage: (encryptedTopicConfigurationMessage: Readonly<IEncryptedTopicConfiguration>) => Readonly<ITopicConfiguration>;

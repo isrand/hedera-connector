@@ -21,4 +21,6 @@ export interface IEncryptedTopicConfiguration extends IEncryptedObject {
    */
   // eslint-disable-next-line id-blacklist
   d: Array<string>;
+
+  size: number;
 }

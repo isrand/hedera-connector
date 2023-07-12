@@ -23,6 +23,7 @@ import {IHederaStub} from './interfaces/IHederaStub';
 import {IGetMessageFromTopicResponse} from '../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {InternalServerErrorException} from '@nestjs/common';
 import * as Long from 'long';
+import * as CredentialsWallet from '../../wallet/Wallet';
 
 /*
  *The HederaStub class implements the methods from IHederaStub
@@ -34,7 +35,7 @@ export class HederaStub implements IHederaStub {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor(private readonly hederaClient: HederaClient) {
-    this.hederaWallet = new Wallet(this.hederaClient.hederaAccountId, this.hederaClient.hederaPrivateKey, new LocalProvider());
+    this.hederaWallet = new Wallet(CredentialsWallet.Wallet.getHederaAccountId(), CredentialsWallet.Wallet.getHederaPrivateKey(), new LocalProvider());
   }
 
   // "getClient" returns the HederaClient instance that this stub is using.
