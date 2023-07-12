@@ -7,7 +7,7 @@ hedera:
 
 wallet:
   # "couchdb" or "filesystem"
-  type:
+  type: filesystem
   couchdb:
     username:
     password:
