@@ -15,14 +15,14 @@ import {
   FileUpdateTransaction,
   TopicDeleteTransaction,
   TopicInfo,
-  FileDeleteTransaction
+  FileDeleteTransaction, Client
 } from '@hashgraph/sdk';
-import {HederaClient} from '../client/HederaClient';
 import {IHederaTransactionResponse} from '../responses/interfaces/IHederaTransactionResponse';
 import {IHederaStub} from './interfaces/IHederaStub';
 import {IGetMessageFromTopicResponse} from '../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {InternalServerErrorException} from '@nestjs/common';
 import * as Long from 'long';
+import * as CredentialsWallet from '../../wallet/Wallet';
 
 /*
  *The HederaStub class implements the methods from IHederaStub
@@ -31,15 +31,15 @@ import * as Long from 'long';
  */
 export class HederaStub implements IHederaStub {
   private readonly hederaWallet: Wallet;
+  public readonly client: Client;
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public constructor(private readonly hederaClient: HederaClient) {
-    this.hederaWallet = new Wallet(this.hederaClient.hederaAccountId, this.hederaClient.hederaPrivateKey, new LocalProvider());
-  }
-
-  // "getClient" returns the HederaClient instance that this stub is using.
-  public getClient(): HederaClient {
-    return this.hederaClient;
+  public constructor() {
+    this.client = Client.forTestnet().setOperator(
+      CredentialsWallet.Wallet.getHederaAccountId(),
+      PrivateKey.fromString(CredentialsWallet.Wallet.getHederaPrivateKey())
+    );
+    this.hederaWallet = new Wallet(CredentialsWallet.Wallet.getHederaAccountId(), CredentialsWallet.Wallet.getHederaPrivateKey(), new LocalProvider());
   }
 
   /*
@@ -120,7 +120,7 @@ export class HederaStub implements IHederaStub {
 
     const message: TopicMessage = await new Promise((resolve, reject) => {
       topicMessageQuery.subscribe(
-        this.hederaClient.client,
+        this.client,
         // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
         (error: TopicMessage) => {
           reject(error);

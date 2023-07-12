@@ -1,14 +1,13 @@
 import {IHederaTransactionResponse} from '../../responses/interfaces/IHederaTransactionResponse';
-import {HederaClient} from '../../client/HederaClient';
 import {IGetMessageFromTopicResponse} from '../../../api/modules/topic/responses/IGetMessageFromTopicResponse';
-import {TopicInfo} from '@hashgraph/sdk';
+import {Client, TopicInfo} from '@hashgraph/sdk';
 
 /*
  * The IHederaStub interface defines a HederaStub object that can be used to interact
  * with the Hedera network, or implemented by a mock class to facilitate unit testing.
  */
 export interface IHederaStub {
-  getClient: () => HederaClient;
+  client: Client;
 
   // Topic
   createTopic: (adminKey: string, renewAccountId: string, submitKey?: string) => Promise<IHederaTransactionResponse>;

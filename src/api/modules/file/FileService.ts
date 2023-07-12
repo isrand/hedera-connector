@@ -4,8 +4,6 @@ import {IHederaTransactionResponse} from '../../../hedera/responses/interfaces/I
 import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
 import {CreateUpdateAppendFileDTO} from './dtos/CreateUpdateAppendFileDTO';
-import {HederaClient} from '../../../hedera/client/HederaClient';
-import {Wallet} from '../../../wallet/Wallet';
 
 @Injectable()
 export class FileService {
@@ -14,7 +12,7 @@ export class FileService {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor() {
-    this.hederaStub = new HederaStub(new HederaClient(Wallet.wallet));
+    this.hederaStub = new HederaStub();
   }
 
   public async createPublicFile(createPublicFileDTO: Readonly<CreateUpdateAppendFileDTO>): Promise<Readonly<IHederaConnectorResponse>> {

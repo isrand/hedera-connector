@@ -21,4 +21,13 @@ export interface IEncryptedTopicConfiguration extends IEncryptedObject {
    */
   // eslint-disable-next-line id-blacklist
   d: Array<string>;
+
+  /*
+   * The field "s" determines the size of the encryption keys
+   * used to encrypt the topic configuration message.
+   * This field needs to be accessible outside of the encrypted
+   * configuration message to be able to decrypt said message.
+   */
+  // eslint-disable-next-line id-blacklist
+  s: number;
 }

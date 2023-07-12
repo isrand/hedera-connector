@@ -35,25 +35,44 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 ### Credentials
 
+#### Hedera Account
+
 > If you don't have a Hedera Hashgraph Testnet account you can create one [here](https://portal.hedera.com/register).
 
-The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network. To boostrap your Hedera Connector with your information, you need to fill in the secret `chart/templates/secrets/credentials.yaml`.
+The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network.
 
 You can find your Hedera Account information [in the Hedera Portal](https://portal.hedera.com) - use the DER-encoded keys.
-You can create the necessary Crystals-Kyber private and public keys by running:
 
-```bash
-npm run generateKyberKeys
+Add your Hedera Account Id, Hedera Public Key and Hedera Private Key in the `values.yaml` file in the `chart` directory.
+
+#### Public / Private Keys
+
+The Hedera Connector uses a set of [Crystals-Kyber](https://pq-crystals.org/kyber/) public / private keys for end-to-end encryption. It makes use of the three key bit sizes: 512, 768, and 1024. Different key sizes are used for flexibility when encrypting data, to reduce the size of the encrypted data and speed up the encryption mechanism.
+
+You can choose to bootstrap the microservices with these keys in two ways:
+
+##### 1. Start the microservice
+
+If you want a quick start you can just run the microservice. It will create the keys on bootstrap and place them in its filesystem.
+
+##### 2. Import your own key(s)
+
+If you already have a set of public / private Crystals-Kyber keys you want to use you can choose to start the microservice with these.
+You need to encode in base64 the contents of your keys and place them under the `/chart/artifacts` folder. The names of the files must be
+
+`kyber_<keysize>.priv` and `kyber_<keysize>.pub`
+
+like the following:
+
+```
+/chart/artifacts/kyber_512.priv | /chart/artifacts/kyber_512.pub
+/chart/artifacts/kyber_768.priv | /chart/artifacts/kyber_768.pub
+/chart/artifacts/kyber_1024.priv | /chart/artifacts/kyber_1024.pub
 ```
 
-This will output the public and private keys in base64 encoding. 
+The remaining key sizes that can't be found will be automatically generated when the microservice starts.
 
-> **Warning**
-> If you want to contribute to this repository and you have filled in the credentials secret, make sure to remove it from the worktree so you don't accidentally push your data:
-> ```bash
-> git update-index --skip-worktree chart/templates/secrets/credentials.yaml
-> ```
-
+On the other hand, if you don't have your own set of keys you can run `npm run generateKyberKeys` to create the six files listed above.
 
 ## Installation
 
