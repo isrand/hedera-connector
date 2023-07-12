@@ -163,7 +163,7 @@ export class TopicService {
       const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
 
       // Decrypt topic configuration message with my private key
-      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.size).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
 
       // Cache in the TopicManager
       TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
@@ -258,7 +258,7 @@ export class TopicService {
 
     const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
     // Decrypt topic configuration message with my private key
-    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.size).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
 
     TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
 

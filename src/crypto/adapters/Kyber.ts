@@ -85,7 +85,7 @@ export class Kyber implements ICryptoAdapter {
       // eslint-disable-next-line id-length
       d: [],
 
-      size: this.keySize
+      s: this.keySize
     };
 
     for (const participant of participants) {
