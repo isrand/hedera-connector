@@ -5,7 +5,8 @@ import {HederaStub} from '../../../hedera/stub/HederaStub';
 import {TopicService} from './TopicService';
 import {GatewayGetTopicMessages} from './dtos/GatewayGetTopicMessages';
 import * as Long from 'long';
-import {TopicManager} from './support/TopicManager';
+import {Wallet} from '../../../wallet/Wallet';
+import {Configuration} from '../../../configuration/Configuration';
 
 /*
  * TopicGateway implements a websocket endpoint to allow for a constant streaming of messages from public
@@ -13,22 +14,23 @@ import {TopicManager} from './support/TopicManager';
  */
 @WebSocketGateway()
 export class TopicGateway {
-  private readonly hederaStub: HederaStub;
-
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor(private readonly topicService: TopicService) {
-    this.hederaStub = new HederaStub();
   }
 
   @SubscribeMessage('topic_messages')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public getPublicTopicMessages(clientSocket: Readonly<Socket>, getTopicMessageParameters: Readonly<GatewayGetTopicMessages>): void {
+  public async getPublicTopicMessages(clientSocket: Readonly<Socket>, getTopicMessageParameters: Readonly<GatewayGetTopicMessages>): Promise<void> {
+    const account = getTopicMessageParameters.accountId ? await Wallet.getAccount(getTopicMessageParameters.accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
     const topicMessageQuery = new TopicMessageQuery({
       topicId: getTopicMessageParameters.topicId
     }).setStartTime(0);
 
     topicMessageQuery.subscribe(
-      this.hederaStub.client,
+      new HederaStub(
+        account
+      ).client,
       // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
       (error: TopicMessage) => {
         clientSocket.emit('topic_error', JSON.stringify(error));
@@ -42,21 +44,26 @@ export class TopicGateway {
 
   @SubscribeMessage('encrypted_topic_messages')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public getEncryptedTopicMessages(clientSocket: Readonly<Socket>, getTopicMessageParameters: Readonly<GatewayGetTopicMessages>): void {
-    const topicConfiguration = TopicManager.getTopicConfiguration(getTopicMessageParameters.topicId);
+  public async getEncryptedTopicMessages(clientSocket: Readonly<Socket>, getTopicMessageParameters: Readonly<GatewayGetTopicMessages>): Promise<void> {
+    const account = getTopicMessageParameters.accountId ? await Wallet.getAccount(getTopicMessageParameters.accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    const topicConfiguration = await this.topicService.getEncryptedTopicConfiguration(getTopicMessageParameters.topicId, account.getHederaAccountId());
+
     const topicMessageQuery = new TopicMessageQuery({
       topicId: getTopicMessageParameters.topicId
     }).setStartTime(0);
 
     topicMessageQuery.subscribe(
-      this.hederaStub.client,
+      new HederaStub(
+        account
+      ).client,
       // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
       (error: TopicMessage) => {
         clientSocket.emit('encrypted_topic_error', JSON.stringify(error));
       },
       // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
       (message: TopicMessage) => {
-        clientSocket.emit('encrypted_topic_message', this.topicService.handleEncryptedTopicMessage(topicConfiguration.encryptionSize, message.contents, message.consensusTimestamp, (message.sequenceNumber as Long).toNumber()));
+        clientSocket.emit('encrypted_topic_message', this.topicService.handleEncryptedTopicMessage(topicConfiguration.encryptionSize, message.contents, message.consensusTimestamp, (message.sequenceNumber as Long).toNumber(), account.getKyberKeyPair(topicConfiguration.encryptionSize).privateKey));
       }
     );
   }

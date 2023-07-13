@@ -1,6 +1,7 @@
 import {IHederaTransactionResponse} from '../../responses/interfaces/IHederaTransactionResponse';
 import {IGetMessageFromTopicResponse} from '../../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {Client, TopicInfo} from '@hashgraph/sdk';
+import {IHederaCreateAccountResponse} from '../../../api/modules/account/interfaces/IHederaCreateAccountResponse';
 
 /*
  * The IHederaStub interface defines a HederaStub object that can be used to interact
@@ -8,6 +9,9 @@ import {Client, TopicInfo} from '@hashgraph/sdk';
  */
 export interface IHederaStub {
   client: Client;
+
+  // Account
+  createAccount: (initialBalance: number) => Promise<IHederaCreateAccountResponse>;
 
   // Topic
   createTopic: (adminKey: string, renewAccountId: string, submitKey?: string) => Promise<IHederaTransactionResponse>;

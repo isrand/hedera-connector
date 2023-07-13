@@ -15,14 +15,15 @@ import {
   FileUpdateTransaction,
   TopicDeleteTransaction,
   TopicInfo,
-  FileDeleteTransaction, Client
+  FileDeleteTransaction, Client, AccountCreateTransaction
 } from '@hashgraph/sdk';
 import {IHederaTransactionResponse} from '../responses/interfaces/IHederaTransactionResponse';
 import {IHederaStub} from './interfaces/IHederaStub';
 import {IGetMessageFromTopicResponse} from '../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {InternalServerErrorException} from '@nestjs/common';
 import * as Long from 'long';
-import * as CredentialsWallet from '../../wallet/Wallet';
+import {IHederaCreateAccountResponse} from '../../api/modules/account/interfaces/IHederaCreateAccountResponse';
+import {Account} from '../../wallet/support/Account';
 
 /*
  *The HederaStub class implements the methods from IHederaStub
@@ -31,15 +32,40 @@ import * as CredentialsWallet from '../../wallet/Wallet';
  */
 export class HederaStub implements IHederaStub {
   private readonly hederaWallet: Wallet;
-  public readonly client: Client;
+  public client: Client;
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public constructor() {
+  public constructor(account: Account) {
     this.client = Client.forTestnet().setOperator(
-      CredentialsWallet.Wallet.getHederaAccountId(),
-      PrivateKey.fromString(CredentialsWallet.Wallet.getHederaPrivateKey())
+      account.getHederaAccountId(),
+      PrivateKey.fromString(account.getHederaPrivateKey())
     );
-    this.hederaWallet = new Wallet(CredentialsWallet.Wallet.getHederaAccountId(), CredentialsWallet.Wallet.getHederaPrivateKey(), new LocalProvider());
+    this.hederaWallet = new Wallet(account.getHederaAccountId(), account.getHederaPrivateKey(), new LocalProvider());
+  }
+
+  public async createAccount(initialBalance: number): Promise<IHederaCreateAccountResponse> {
+    const accountPrivateKey = PrivateKey.generateED25519();
+    const accountPublicKey = accountPrivateKey.publicKey;
+
+    const transaction: AccountCreateTransaction = new AccountCreateTransaction({
+      key: accountPublicKey,
+      initialBalance: new Hbar(initialBalance)
+    });
+
+    await transaction.freezeWithSigner(this.hederaWallet);
+    await this.signWithSigner(transaction, this.hederaWallet);
+
+    const response = await this.executeWithSigner(transaction, this.hederaWallet);
+
+    if (!response.receipt.accountId) {
+      throw new Error('Error getting new account ID from the transaction response.');
+    }
+
+    return {
+      hederaAccountId: response.receipt.accountId.toString(),
+      hederaPublicKey: accountPublicKey.toStringDer(),
+      hederaPrivateKey: accountPrivateKey.toStringDer()
+    };
   }
 
   /*

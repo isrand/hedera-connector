@@ -1,5 +1,3 @@
-export interface IEncryptedTopicMessage {
-  a: Array<string>;
-  b: Array<string>;
-  c: Array<string>;
-}
+import {IEncryptedObject} from './IEncryptedObject';
+
+export type IEncryptedTopicMessage = IEncryptedObject;

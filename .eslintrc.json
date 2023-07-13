@@ -103,6 +103,7 @@
     {
       "capIsNewExceptions": [
         "ApiTags",
+        "ApiQuery",
         "ApiCreatedResponse",
         "ApiInternalServerErrorResponse",
         "ApiOkResponse",
@@ -121,6 +122,7 @@
         "Param",
         "Post",
         "Put",
+        "Query",
         "Res",
         "SubscribeMessage",
         "WebSocketGateway"

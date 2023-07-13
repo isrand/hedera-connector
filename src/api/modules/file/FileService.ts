@@ -4,22 +4,22 @@ import {IHederaTransactionResponse} from '../../../hedera/responses/interfaces/I
 import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
 import {CreateUpdateAppendFileDTO} from './dtos/CreateUpdateAppendFileDTO';
+import {Wallet} from '../../../wallet/Wallet';
+import {Configuration} from '../../../configuration/Configuration';
 
 @Injectable()
 export class FileService {
   private readonly logger: Logger = new Logger(FileService.name);
-  private readonly hederaStub: HederaStub;
 
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public constructor() {
-    this.hederaStub = new HederaStub();
-  }
-
-  public async createPublicFile(createPublicFileDTO: Readonly<CreateUpdateAppendFileDTO>): Promise<Readonly<IHederaConnectorResponse>> {
+  public async createPublicFile(createPublicFileDTO: Readonly<CreateUpdateAppendFileDTO>, accountId?: string): Promise<Readonly<IHederaConnectorResponse>> {
     this.logger.log(`Creating new public file with contents ${JSON.stringify(createPublicFileDTO.contents)}`);
 
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
     const finalContents: string | undefined = this.stringifyContents(createPublicFileDTO.contents);
-    const createPublicFileResponse: IHederaTransactionResponse = await this.hederaStub.createFile(finalContents !== '' ? finalContents : undefined);
+    const createPublicFileResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).createFile(finalContents !== '' ? finalContents : undefined);
 
     if (createPublicFileResponse.receipt.fileId) {
       this.logger.log(`Created new public file. File ID: ${createPublicFileResponse.receipt.fileId.toString()}`);
@@ -28,36 +28,49 @@ export class FileService {
     return new HederaTransactionResponse(createPublicFileResponse).parse();
   }
 
-  public async updatePublicFile(fileId: string, createPublicFileDTO: Readonly<CreateUpdateAppendFileDTO>): Promise<Readonly<IHederaConnectorResponse>> {
+  public async updatePublicFile(fileId: string, createPublicFileDTO: Readonly<CreateUpdateAppendFileDTO>, accountId?: string): Promise<Readonly<IHederaConnectorResponse>> {
     this.logger.log(`Updating file ${fileId} with contents ${JSON.stringify(createPublicFileDTO.contents)}`);
 
-    const updatePublicFileResponse: IHederaTransactionResponse = await this.hederaStub.updateFile(fileId, this.stringifyContents(createPublicFileDTO.contents));
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const updatePublicFileResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).updateFile(fileId, this.stringifyContents(createPublicFileDTO.contents));
 
     this.logger.log(`Updated public file ${fileId}`);
 
     return new HederaTransactionResponse(updatePublicFileResponse).parse();
   }
 
-  public async getPublicFileContents(fileId: string): Promise<string> {
+  public async getPublicFileContents(fileId: string, accountId?: string): Promise<string> {
     this.logger.log(`Getting the contents of file ${fileId}`);
 
-    return await this.hederaStub.getFileContents(fileId);
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    return await new HederaStub(
+      account
+    ).getFileContents(fileId);
   }
 
-  public async appendToPublicFile(fileId: string, contents: string): Promise<Readonly<IHederaConnectorResponse>> {
+  public async appendToPublicFile(fileId: string, contents: string, accountId?: string): Promise<Readonly<IHederaConnectorResponse>> {
     this.logger.log(`Appending ${JSON.stringify(contents)} to file ${fileId}`);
 
-    const appendToPublicFileResponse: IHederaTransactionResponse = await this.hederaStub.appendToFile(fileId, contents);
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const appendToPublicFileResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).appendToFile(fileId, contents);
 
     this.logger.log(`Appended ${JSON.stringify(contents)} to public file ${fileId}`);
 
     return new HederaTransactionResponse(appendToPublicFileResponse).parse();
   }
 
-  public async deleteFile(fileId: string): Promise<IHederaConnectorResponse> {
+  public async deleteFile(fileId: string, accountId?: string): Promise<IHederaConnectorResponse> {
     this.logger.log(`Deleting file ${fileId}`);
 
-    const deleteFileResponse: IHederaTransactionResponse = await this.hederaStub.deleteFile(fileId);
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const deleteFileResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).deleteFile(fileId);
 
     this.logger.log(`Deleted file ${fileId}`);
 

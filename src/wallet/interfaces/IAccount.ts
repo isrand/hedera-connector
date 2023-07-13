@@ -1,6 +1,6 @@
 import {IKyberKeyPair} from './IKyberKeyPair';
 
-export interface ICredentials {
+export interface IAccount {
   hederaAccountId: string;
   hederaPublicKey: string;
   hederaPrivateKey: string;

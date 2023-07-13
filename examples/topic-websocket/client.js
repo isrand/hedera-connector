@@ -3,6 +3,7 @@ const io = require('socket.io-client');
 const socket = io('http://localhost:4000');
 
 const request = {
+  accountId: '0.0.12345',
   topicId: '0.0.12345'
 };
 

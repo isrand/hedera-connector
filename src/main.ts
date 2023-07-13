@@ -7,8 +7,7 @@ import {Wallet} from './wallet/Wallet';
 export class Main {
   public async bootstrap(): Promise<void> {
     // Initialize the node wallet depending on the configuration passed via environment variables
-    Wallet.initialize(Configuration.walletType);
-
+    await Wallet.initialize(Configuration.walletType);
     // Initialize application
     const app = await NestFactory.create(AppModule);
 

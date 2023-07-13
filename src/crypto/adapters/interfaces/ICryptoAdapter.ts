@@ -10,7 +10,7 @@ import {ITopicMessage} from '../../../api/modules/topic/interfaces/ITopicMessage
 export interface ICryptoAdapter {
   generateKeyPair: () => any;
   encryptMessage: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string) => Readonly<IEncryptedTopicMessage>;
-  encryptTopicConfiguraton: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string, submitKey: string) => Readonly<IEncryptedTopicConfiguration>;
-  decryptTopicConfigurationMessage: (encryptedTopicConfigurationMessage: Readonly<IEncryptedTopicConfiguration>) => Readonly<ITopicConfiguration>;
-  decryptTopicMessage: (encryptedTopicMessage: Readonly<IEncryptedTopicMessage>, consensusTimeStamp: Readonly<Timestamp>, sequenceNumber: number) => Readonly<ITopicMessage>;
+  encryptTopicConfiguration: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string, submitKey: string) => Readonly<IEncryptedTopicConfiguration>;
+  decryptTopicConfigurationMessage: (encryptedTopicConfigurationMessage: Readonly<IEncryptedTopicConfiguration>, privateKey: string) => Readonly<ITopicConfiguration>;
+  decryptTopicMessage: (encryptedTopicMessage: Readonly<IEncryptedTopicMessage>, consensusTimeStamp: Readonly<Timestamp>, sequenceNumber: number, privateKey: string) => Readonly<ITopicMessage>;
 }
