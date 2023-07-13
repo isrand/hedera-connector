@@ -29,14 +29,18 @@ export class CouchDBWallet implements IWallet {
   }
 
   public async loadAccount(accountId: string): Promise<Account> {
-    const databaseResponse: IAccount = await this.couchDBAdapter.getFromCollectionById(this.accountCollectionName, accountId) as unknown as IAccount;
+    try {
+      const databaseResponse: IAccount = await this.couchDBAdapter.getFromCollectionById(this.accountCollectionName, accountId) as unknown as IAccount;
 
-    return new Account(
-      databaseResponse.hederaAccountId,
-      databaseResponse.hederaPublicKey,
-      databaseResponse.hederaPrivateKey,
-      databaseResponse.kyberKeys
-    );
+      return new Account(
+        databaseResponse.hederaAccountId,
+        databaseResponse.hederaPublicKey,
+        databaseResponse.hederaPrivateKey,
+        databaseResponse.kyberKeys
+      );
+    } catch (error: unknown) {
+      throw new Error(`Account ${accountId} not found in the database.`);
+    }
   }
 
   public async loadAllAccounts(): Promise<Array<Account>> {
@@ -63,8 +67,10 @@ export class CouchDBWallet implements IWallet {
       return;
     }
 
+    this.logger.debug(`Writing Account ${account.getHederaAccountId()} to database`);
+
     const accountObject: IAccount = account.toObject();
-    const objectInDatabase: IAccount & nano.IdentifiedDocument = {
+    const accountDocument: IAccount & nano.IdentifiedDocument = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       _id: accountObject.hederaAccountId,
       hederaAccountId: accountObject.hederaAccountId,
@@ -73,7 +79,9 @@ export class CouchDBWallet implements IWallet {
       kyberKeys: accountObject.kyberKeys
     };
 
-    await this.couchDBAdapter.storeInCollection(this.accountCollectionName, objectInDatabase);
+    await this.couchDBAdapter.storeInCollection(this.accountCollectionName, accountDocument);
+
+    this.logger.debug(`Written Account ${account.getHederaAccountId()} to database`);
   }
 
   private async initializeAccountsCollection(): Promise<void> {

@@ -49,6 +49,10 @@ export class CouchDBAdapter {
   }
 
   public async getFromCollectionById(collectionName: string, id: string): Promise<nano.DocumentGetResponse> {
+    if (!await this.documentExists(collectionName, id)) {
+      throw new Error('Document not found.');
+    }
+
     return await this.databaseConnector.use(collectionName).get(id);
   }
 

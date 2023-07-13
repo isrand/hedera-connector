@@ -14,9 +14,11 @@ export class Wallet {
     switch (walletType) {
       case WalletType.FileSystem:
         this.walletProvider = new FileSystemWallet();
+
         break;
       case WalletType.CouchDB:
         this.walletProvider = new CouchDBWallet();
+
         break;
       default:
         throw new Error('Unrecognized wallet type. Available options are "filesystem" or "couchdb"');
