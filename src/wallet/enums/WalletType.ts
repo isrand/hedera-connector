@@ -1,3 +1,4 @@
 export enum WalletType {
-  FileSystem = 'filesystem'
+  FileSystem = 'filesystem',
+  CouchDB = 'couchdb'
 }

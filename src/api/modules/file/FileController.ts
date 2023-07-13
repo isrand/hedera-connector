@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import { ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import {Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
+import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {FileService} from './FileService';
 import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
 import {CreateUpdateAppendFileDTO} from './dtos/CreateUpdateAppendFileDTO';
-import { Configuration } from "../../../configuration/Configuration";
+import {Configuration} from '../../../configuration/Configuration';
 
 @ApiTags('File')
 @Controller()

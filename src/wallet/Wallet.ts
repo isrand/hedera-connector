@@ -3,6 +3,7 @@ import {IWallet} from './interfaces/IWallet';
 import {FileSystemWallet} from './filesystem/FileSystemWallet';
 import {Account} from './support/Account';
 import {Logger} from '@nestjs/common';
+import {CouchDBWallet} from './couchdb/CouchDBWallet';
 
 export class Wallet {
   private static readonly logger: Logger = new Logger(Wallet.name);
@@ -10,8 +11,15 @@ export class Wallet {
   private static walletProvider: IWallet;
 
   public static async initialize(walletType: string): Promise<void> {
-    if (walletType === WalletType.FileSystem) {
-      this.walletProvider = new FileSystemWallet();
+    switch (walletType) {
+      case WalletType.FileSystem:
+        this.walletProvider = new FileSystemWallet();
+        break;
+      case WalletType.CouchDB:
+        this.walletProvider = new CouchDBWallet();
+        break;
+      default:
+        throw new Error('Unrecognized wallet type. Available options are "filesystem" or "couchdb"');
     }
 
     await this.initializeNodeAccount();
