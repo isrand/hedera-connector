@@ -19,4 +19,6 @@ export interface IEncryptedObject {
    * is in turn encrypted with each participant's public key
    */
   c: Array<string>;
+
+  h: string;
 }

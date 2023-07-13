@@ -14,16 +14,11 @@ import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
 import {Wallet} from '../../../wallet/Wallet';
 import {Crypto} from '../../../crypto/Crypto';
 import {ITopicMessage} from './interfaces/ITopicMessage';
+import {Configuration} from '../../../configuration/Configuration';
 
 @Injectable()
 export class TopicService {
   private readonly logger: Logger = new Logger(TopicService.name);
-  private readonly hederaStub: HederaStub;
-
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public constructor() {
-    this.hederaStub = new HederaStub();
-  }
 
   /*
    *
@@ -31,12 +26,15 @@ export class TopicService {
    *
    */
 
-  public async createPublicTopic(): Promise<IHederaConnectorResponse> {
+  public async createPublicTopic(accountId?: string): Promise<IHederaConnectorResponse> {
     this.logger.log('Creating new public topic');
 
-    const createPublicTopicResponse: IHederaTransactionResponse = await this.hederaStub.createTopic(
-      Wallet.getHederaPrivateKey(),
-      Wallet.getHederaAccountId()
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const createPublicTopicResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).createTopic(
+      account.getHederaPrivateKey(),
+      account.getHederaAccountId()
     );
 
     if (createPublicTopicResponse.receipt.topicId) {
@@ -47,10 +45,13 @@ export class TopicService {
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToPublicTopic(topicId: string, message: string | Uint8Array): Promise<IHederaConnectorResponse> {
+  public async sendMessageToPublicTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<IHederaConnectorResponse> {
     this.logger.log(`Sending message '${message}' to public topic ID ${topicId.replace('0.0.', '')}`);
 
-    const sendMessageToPublicTopicResponse: IHederaTransactionResponse = await this.hederaStub.sendMessageToTopic(
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const sendMessageToPublicTopicResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).sendMessageToTopic(
       topicId,
       message
     );
@@ -60,24 +61,35 @@ export class TopicService {
     return new HederaTransactionResponse(sendMessageToPublicTopicResponse).parse();
   }
 
-  public async getMessageFromPublicTopic(topicId: string, sequenceNumber: number): Promise<IGetMessageFromTopicResponse> {
-    return await this.hederaStub.getMessageFromTopic(topicId, sequenceNumber);
+  public async getMessageFromPublicTopic(topicId: string, sequenceNumber: number, accountId?: string): Promise<IGetMessageFromTopicResponse> {
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    return await new HederaStub(
+      account
+    ).getMessageFromTopic(topicId, sequenceNumber);
   }
 
-  public async deleteTopic(topicId: string): Promise<IHederaConnectorResponse> {
+  public async deleteTopic(topicId: string, accountId?: string): Promise<IHederaConnectorResponse> {
     this.logger.log(`Deleting topic ${topicId}`);
 
-    const deleteTopicResponse: IHederaTransactionResponse = await this.hederaStub.deleteTopic(topicId);
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const deleteTopicResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).deleteTopic(topicId);
 
     this.logger.log(`Deleted topic ${topicId}`);
 
     return new HederaTransactionResponse(deleteTopicResponse).parse();
   }
 
-  public async getTopicInformation(topicId: string): Promise<TopicInfo> {
+  public async getTopicInformation(topicId: string, accountId?: string): Promise<TopicInfo> {
     this.logger.log(`Getting information for topic ${topicId}`);
 
-    return await this.hederaStub.getTopicInformation(topicId);
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    return await new HederaStub(
+      account
+    ).getTopicInformation(topicId);
   }
 
   /*
@@ -87,8 +99,10 @@ export class TopicService {
    */
 
   // eslint-disable-next-line  @typescript-eslint/prefer-readonly-parameter-types
-  public async createEncryptedTopic(createEncryptedTopicDTO: CreateEncryptedTopicDTO): Promise<IHederaConnectorResponse> {
+  public async createEncryptedTopic(createEncryptedTopicDTO: CreateEncryptedTopicDTO, accountId?: string): Promise<IHederaConnectorResponse> {
     const submitKey = PrivateKey.generateED25519().toStringRaw();
+
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
     /*
      * Construct topic configuration message
@@ -101,8 +115,8 @@ export class TopicService {
       participants: [
         ...createEncryptedTopicDTO.participants as Array<ITopicParticipant>,
         {
-          hederaPublicKey: Wallet.getHederaPublicKey(),
-          kyberPublicKey: Wallet.getKyberKeyPair(createEncryptedTopicDTO.encryptionSize).publicKey
+          hederaPublicKey: account.getHederaPublicKey(),
+          kyberPublicKey: account.getKyberKeyPair(createEncryptedTopicDTO.encryptionSize).publicKey
         }
       ],
       submitKey: submitKey
@@ -117,23 +131,28 @@ export class TopicService {
     this.logger.log(`Creating new encrypted topic with configuration: ${JSON.stringify(topicConfigurationMessage)}`);
 
     // Construct final encrypted configuration message
-    const encryptedConfigurationMessage: IEncryptedTopicConfiguration = new Crypto(createEncryptedTopicDTO.encryptionSize).adapter.encryptTopicConfiguraton(topicConfigurationMessage.participants, JSON.stringify(topicConfigurationMessage), submitKey);
+    const encryptedConfigurationMessage: IEncryptedTopicConfiguration = new Crypto(createEncryptedTopicDTO.encryptionSize).adapter.encryptTopicConfiguration(topicConfigurationMessage.participants, JSON.stringify(topicConfigurationMessage), submitKey);
 
     // Create the topic
-    const createTopicResponse: IHederaTransactionResponse = await this.hederaStub.createTopic(
-      Wallet.getHederaPrivateKey(),
-      Wallet.getHederaAccountId(),
+    const createTopicResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).createTopic(
+      account.getHederaPrivateKey(),
+      account.getHederaAccountId(),
       submitKey
     );
 
     // Send message in encrypted topic
 
     if (createTopicResponse.receipt.topicId) {
-      await this.hederaStub.sendMessageToTopic(
-        createTopicResponse.receipt.topicId.toString(),
-        Buffer.from(JSON.stringify(encryptedConfigurationMessage)).toString('base64'),
-        submitKey
-      );
+      await new HederaStub(
+        account
+      )
+        .sendMessageToTopic(
+          createTopicResponse.receipt.topicId.toString(),
+          Buffer.from(JSON.stringify(encryptedConfigurationMessage)).toString('base64'),
+          submitKey
+        );
 
       this.logger.log(`Created new encrypted topic. Topic ID: ${JSON.stringify(createTopicResponse.receipt.topicId.toString().replace('0.0.', ''))}`);
 
@@ -144,8 +163,10 @@ export class TopicService {
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToEncryptedTopic(topicId: string, message: string | Uint8Array, recipients?: Array<string>): Promise<unknown> {
+  public async sendMessageToEncryptedTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<unknown> {
     this.logger.log(`Sending message '${message}' to encrypted, private topic ID ${topicId.replace('0.0.', '')}`);
+
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
     /*
      * First, check if we have cached the topic configuration
@@ -153,7 +174,9 @@ export class TopicService {
      */
     if (!TopicManager.hasTopic(topicId)) {
       // Get topic configuration message
-      const firstTopicMessage: IGetMessageFromTopicResponse = await this.hederaStub.getMessageFromTopic(topicId, 1);
+      const firstTopicMessage: IGetMessageFromTopicResponse = await new HederaStub(
+        account
+      ).getMessageFromTopic(topicId, 1);
 
       const base64EncodedEncryptedTopicConfigurationMessage: string = Buffer.from(firstTopicMessage.contents.buffer).toString('base64');
 
@@ -162,7 +185,7 @@ export class TopicService {
       const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
 
       // Decrypt topic configuration message with my private key
-      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
       // Cache in the TopicManager
       TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
@@ -172,31 +195,18 @@ export class TopicService {
 
     // Create message object
     const messageObject = {
-      from: Wallet.getHederaPublicKey(),
+      from: account.getHederaPublicKey(),
       payload: message
     };
 
     // Add Node account to message recipients
     let messageRecipients: Array<ITopicParticipant> = [
       {
-        hederaPublicKey: Wallet.getHederaPublicKey(),
-        kyberPublicKey: Wallet.getKyberKeyPair(topicConfiguration.encryptionSize).publicKey
-      }
+        hederaPublicKey: account.getHederaPublicKey(),
+        kyberPublicKey: account.getKyberKeyPair(topicConfiguration.encryptionSize).publicKey
+      },
+      ...topicConfiguration.participants
     ];
-
-    if (recipients) {
-      for (const recipientPublicKey of recipients) {
-        const recipientInParticipants = topicConfiguration.participants.find((participant: Readonly<ITopicParticipant>) => {
-          return participant.hederaPublicKey === recipientPublicKey;
-        });
-
-        if (recipientInParticipants) {
-          messageRecipients.push(recipientInParticipants);
-        }
-      }
-    } else {
-      messageRecipients = topicConfiguration.participants;
-    }
 
     // Remove duplicate recipients from messageRecipients object
     messageRecipients = messageRecipients.filter((value: Readonly<ITopicParticipant>, index, self: ReadonlyArray<Readonly<ITopicParticipant>>) => index === self.findIndex((topicParticipant) => topicParticipant.hederaPublicKey === value.hederaPublicKey && topicParticipant.kyberPublicKey === value.kyberPublicKey));
@@ -213,7 +223,9 @@ export class TopicService {
     }
 
     // Send message to topic
-    const sendMessageToTopicResponse = await this.hederaStub.sendMessageToTopic(
+    const sendMessageToTopicResponse = await new HederaStub(
+      account
+    ).sendMessageToTopic(
       topicId.toString(),
       base64EncodedEncryptedMessage,
       Buffer.from(topicConfiguration.submitKey).toString()
@@ -224,32 +236,40 @@ export class TopicService {
     return new HederaTransactionResponse(sendMessageToTopicResponse).parse();
   }
 
-  public async getEncryptedTopicParticipants(topicId: string): Promise<unknown> {
-    const encryptedTopicConfigurationMessage: ITopicConfiguration = await this.getEncryptedTopicConfiguration(topicId);
+  public async getEncryptedTopicParticipants(topicId: string, accountId?: string): Promise<unknown> {
+    const encryptedTopicConfigurationMessage: ITopicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
 
     return encryptedTopicConfigurationMessage.participants;
   }
 
-  public async getMessageFromEncryptedTopic(topicId: string, sequenceNumber: number): Promise<ITopicMessage | ITopicConfiguration> {
+  public async getMessageFromEncryptedTopic(topicId: string, sequenceNumber: number, accountId?: string): Promise<ITopicMessage | ITopicConfiguration> {
     let topicConfiguration: ITopicConfiguration;
+
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
     if (TopicManager.hasTopic(topicId)) {
       topicConfiguration = TopicManager.getTopicConfiguration(topicId);
     } else {
-      topicConfiguration = await this.getEncryptedTopicConfiguration(topicId);
+      topicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
     }
 
     if (sequenceNumber === 1) {
       return topicConfiguration;
     }
 
-    const getMessageFromTopicResponse: IGetMessageFromTopicResponse = await this.hederaStub.getMessageFromTopic(topicId, sequenceNumber);
+    const getMessageFromTopicResponse: IGetMessageFromTopicResponse = await new HederaStub(
+      account
+    ).getMessageFromTopic(topicId, sequenceNumber);
 
-    return this.handleEncryptedTopicMessage(topicConfiguration.encryptionSize, getMessageFromTopicResponse.contents, getMessageFromTopicResponse.consensusTimestamp, getMessageFromTopicResponse.sequenceNumber);
+    return this.handleEncryptedTopicMessage(topicConfiguration.encryptionSize, getMessageFromTopicResponse.contents, getMessageFromTopicResponse.consensusTimestamp, getMessageFromTopicResponse.sequenceNumber, account.getKyberKeyPair(topicConfiguration.encryptionSize).privateKey);
   }
 
-  public async getEncryptedTopicConfiguration(topicId: string): Promise<ITopicConfiguration> {
-    const firstTopicMessage: IGetMessageFromTopicResponse = await this.hederaStub.getMessageFromTopic(topicId, 1);
+  public async getEncryptedTopicConfiguration(topicId: string, accountId?: string): Promise<ITopicConfiguration> {
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    const firstTopicMessage: IGetMessageFromTopicResponse = await new HederaStub(
+      account
+    ).getMessageFromTopic(topicId, 1);
 
     const base64EncodedEncryptedTopicConfigurationMessage: string = Buffer.from(firstTopicMessage.contents.buffer).toString('base64');
 
@@ -257,7 +277,7 @@ export class TopicService {
 
     const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
     // Decrypt topic configuration message with my private key
-    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage);
+    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
     TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
 
@@ -265,9 +285,9 @@ export class TopicService {
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public handleEncryptedTopicMessage(encryptionSize: number, contents: Uint8Array | string, consensusTimeStamp: Timestamp, sequenceNumber: number): ITopicMessage | ITopicConfiguration {
+  public handleEncryptedTopicMessage(encryptionSize: number, contents: Uint8Array | string, consensusTimeStamp: Timestamp, sequenceNumber: number, privateKey: string): ITopicMessage | ITopicConfiguration {
     const encryptedMessage = Buffer.from(Buffer.from(contents).toString(), 'base64').toString();
 
-    return new Crypto(encryptionSize).adapter.decryptTopicMessage(JSON.parse(encryptedMessage) as IEncryptedTopicMessage, consensusTimeStamp, sequenceNumber);
+    return new Crypto(encryptionSize).adapter.decryptTopicMessage(JSON.parse(encryptedMessage) as IEncryptedTopicMessage, consensusTimeStamp, sequenceNumber, privateKey);
   }
 }

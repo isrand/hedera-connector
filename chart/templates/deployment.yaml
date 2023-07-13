@@ -15,8 +15,11 @@ spec:
         component: hedera-connector
     spec:
       volumes:
+        {{- if eq .Values.wallet.type "filesystem" }}
         - name: wallet
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: wallet
+        {{- end }}
         - name: credentials
           secret:
             secretName: credentials
@@ -25,6 +28,8 @@ spec:
           image: localhost:5000/hedera-connector:1.0.0
           imagePullPolicy: Always
           env:
+            - name: NODE_HEDERA_ACCOUNT_ID
+              value: {{ .Values.hedera.account.id }}
             - name: WALLET_TYPE
               value: {{ .Values.wallet.type }}
             - name: HEDERA_NETWORK
@@ -35,5 +40,7 @@ spec:
             - name: credentials
               mountPath: /opt/credentials
               readOnly: false
+            {{- if eq .Values.wallet.type "filesystem" }}
             - name: wallet
               mountPath: /opt/wallet
+            {{- end }}
