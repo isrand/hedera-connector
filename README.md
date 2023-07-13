@@ -1,6 +1,17 @@
 # Hedera Hashgraph Testnet Connector
 
-This repository contains a NestJS API server to simplify integration with the Hedera Hashgraph Testnet.
+This repository contains a NestJS API server to simplify integration with the Hedera Hashgraph Testnet. Its main features are Node multitenancy and an implementation of post-quantum cryptography on top of the public Blockchain layer.
+
+## Table of Contents
+1. [Setup](#setup)
+   - [Dependencies](#dependencies)
+   - [Kubernetes Environment](#kubernetes-environment)
+   - [Credentials](#credentials)
+     - [Wallet Provider](#wallet-provider)
+     - [Hedera Account](#hedera-account)
+     - [Public / Private Keys](#public--private-keys)
+2. [Installation](#installation)
+3. [Removal](#removal)
 
 ## Setup
 
@@ -35,6 +46,20 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 ### Credentials
 
+#### Wallet Provider
+
+You can choose to start the Connector with two wallet types: `filesystem` and `couchdb`. To select either, change the `wallet.type` key in the `values.yaml` file in the chart directory.
+
+##### Filesystem
+
+The _filesystem_ wallet type stores all information about the multiple accounts on the node on the path `/opt/wallet` inside of the container. A PersistentVolumeClaim is used to store this data between microservice restarts.
+
+##### CouchDB
+
+The _couchdb_ wallet type stores account information in a collection called `accounts` in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.
+
+If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the `settings.local` toggle to false in `values.yaml`, specify the database URL (without `username:password`) under `wallet.couchdb.url`, and update the `database-credentials.yaml` secret with the correct username and password for the database.
+
 #### Hedera Account
 
 > If you don't have a Hedera Hashgraph Testnet account you can create one [here](https://portal.hedera.com/register).
@@ -49,7 +74,7 @@ Add your Hedera Account Id, Hedera Public Key and Hedera Private Key in the `val
 
 The Hedera Connector uses a set of [Crystals-Kyber](https://pq-crystals.org/kyber/) public / private keys for end-to-end encryption. It makes use of the three key bit sizes: 512, 768, and 1024. Different key sizes are used for flexibility when encrypting data, to reduce the size of the encrypted data and speed up the encryption mechanism.
 
-You can choose to bootstrap the microservices with these keys in two ways:
+You can choose to bootstrap the microservice with these keys in two ways:
 
 ##### 1. Start the microservice
 
@@ -83,6 +108,8 @@ npm run buildDockerImage
 npm run push
 npm run start
 ```
+
+Once the container is up and running you can port forward it through Kubernetes and access the Swagger documentation on http://localhost:4000/swagger. Here you will see a list of endpoints and operations you can perform.
 
 ## Removal
 
