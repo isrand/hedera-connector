@@ -8,15 +8,14 @@ export interface IEncryptedObject {
 
   /*
    * The field "b" is an array containing the encapsulated symmetric keys.
-   * The symmetric key used to encrypt the topic configuration message
-   * is in turn encrypted with each participant's public key
+   * The end user can extract their symmetric key by performing a Kyber decryption
+   * pass.
    */
   b: Array<string>;
 
   /*
    * The field "c" is an array containing the init vectors.
-   * The symmetric key used to encrypt the topic configuration message
-   * is in turn encrypted with each participant's public key
+   * These init vectors are created by using a Kyber encryption pass.
    */
   c: Array<string>;
 
