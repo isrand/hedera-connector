@@ -33,8 +33,6 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
   @Post('/encryptedtopic')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async createEncryptedTopic(@Body() createEncryptedTopicDTO: CreateEncryptedTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
-    console.log(accountId);
-
     return await this.topicService.createEncryptedTopic(createEncryptedTopicDTO, accountId);
   }
 
