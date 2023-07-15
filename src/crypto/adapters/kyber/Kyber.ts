@@ -1,15 +1,15 @@
 /* eslint-disable */
 // ESLint will complain a lot in this file because of Kyber.
-import { ITopicConfiguration } from "../../../api/modules/topic/interfaces/ITopicConfiguration";
-import { IEncryptedTopicMessage } from "../../../api/modules/topic/interfaces/IEncryptedTopicMessage";
-import { ITopicMessage } from "../../../api/modules/topic/interfaces/ITopicMessage";
-import { ICryptoAdapter } from "../../interfaces/ICryptoAdapter";
-import { ITopicParticipant } from "../../../api/modules/topic/interfaces/ITopicParticipant";
-import { IEncryptedTopicConfiguration } from "../../../api/modules/topic/interfaces/IEncryptedTopicConfiguration";
+import {ITopicConfiguration} from "../../../api/modules/encryptedtopic/interfaces/ITopicConfiguration";
+import {IEncryptedTopicMessage} from "../../../api/modules/encryptedtopic/interfaces/IEncryptedTopicMessage";
+import {ITopicMessage} from "../../../api/modules/topic/interfaces/ITopicMessage";
+import {ICryptoAdapter} from "../../interfaces/ICryptoAdapter";
+import {ITopicParticipant} from "../../../api/modules/encryptedtopic/interfaces/ITopicParticipant";
+import {IEncryptedTopicConfiguration} from "../../../api/modules/encryptedtopic/interfaces/IEncryptedTopicConfiguration";
 import * as crypto from "crypto";
-import { Timestamp } from "@hashgraph/sdk";
-import { KyberKeyPair } from "./support/KyberKeyPair";
-import { KyberKeySize } from "./enums/KyberKeySize";
+import {Timestamp} from "@hashgraph/sdk";
+import {KyberKeyPair} from "./support/KyberKeyPair";
+import {KyberKeySize} from "./enums/KyberKeySize";
 
 const kyber = require('crystals-kyber');
 

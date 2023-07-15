@@ -1,102 +1,24 @@
-import {PrivateKey, Timestamp, TopicInfo} from '@hashgraph/sdk';
+import {PrivateKey, Timestamp} from '@hashgraph/sdk';
 import {Injectable, Logger} from '@nestjs/common';
 import {HederaStub} from '../../../hedera/stub/HederaStub';
 import {IHederaTransactionResponse} from '../../../hedera/responses/interfaces/IHederaTransactionResponse';
-import {CreateEncryptedTopicDTO} from '../encryptedtopic/dtos/CreateEncryptedTopicDTO';
-import {ITopicConfiguration} from '../encryptedtopic/interfaces/ITopicConfiguration';
-import {IEncryptedTopicConfiguration} from '../encryptedtopic/interfaces/IEncryptedTopicConfiguration';
+import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
+import {ITopicConfiguration} from './interfaces/ITopicConfiguration';
+import {IEncryptedTopicConfiguration} from './interfaces/IEncryptedTopicConfiguration';
 import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
-import {IGetMessageFromTopicResponse} from './responses/IGetMessageFromTopicResponse';
-import {TopicManager} from '../encryptedtopic/support/TopicManager';
-import {ITopicParticipant} from '../encryptedtopic/interfaces/ITopicParticipant';
-import {IEncryptedTopicMessage} from '../encryptedtopic/interfaces/IEncryptedTopicMessage';
+import {IGetMessageFromTopicResponse} from '../topic/responses/IGetMessageFromTopicResponse';
+import {TopicManager} from './support/TopicManager';
+import {ITopicParticipant} from './interfaces/ITopicParticipant';
+import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
 import {Wallet} from '../../../wallet/Wallet';
 import {Crypto} from '../../../crypto/Crypto';
-import {ITopicMessage} from './interfaces/ITopicMessage';
+import {ITopicMessage} from '../topic/interfaces/ITopicMessage';
 import {Configuration} from '../../../configuration/Configuration';
 
 @Injectable()
-export class TopicService {
-  private readonly logger: Logger = new Logger(TopicService.name);
-
-  /*
-   *
-   *Public topics
-   *
-   */
-
-  public async createPublicTopic(accountId?: string): Promise<IHederaNetworkResponse> {
-    this.logger.log('Creating new public topic');
-
-    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
-    const createPublicTopicResponse: IHederaTransactionResponse = await new HederaStub(
-      account
-    ).createTopic(
-      account.getHederaPrivateKey(),
-      account.getHederaAccountId()
-    );
-
-    if (createPublicTopicResponse.receipt.topicId) {
-      this.logger.log(`Created new public topic. Topic ID: ${createPublicTopicResponse.receipt.topicId.toString()}`);
-    }
-
-    return new HederaTransactionResponse(createPublicTopicResponse).parse();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToPublicTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<IHederaNetworkResponse> {
-    this.logger.log(`Sending message '${message}' to public topic ID ${topicId.replace('0.0.', '')}`);
-
-    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
-    const sendMessageToPublicTopicResponse: IHederaTransactionResponse = await new HederaStub(
-      account
-    ).sendMessageToTopic(
-      topicId,
-      message
-    );
-
-    this.logger.log('Sent message to public topic');
-
-    return new HederaTransactionResponse(sendMessageToPublicTopicResponse).parse();
-  }
-
-  public async getMessageFromPublicTopic(topicId: string, sequenceNumber: number, accountId?: string): Promise<IGetMessageFromTopicResponse> {
-    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
-
-    return await new HederaStub(
-      account
-    ).getMessageFromTopic(topicId, sequenceNumber);
-  }
-
-  public async deleteTopic(topicId: string, accountId?: string): Promise<IHederaNetworkResponse> {
-    this.logger.log(`Deleting topic ${topicId}`);
-
-    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
-    const deleteTopicResponse: IHederaTransactionResponse = await new HederaStub(
-      account
-    ).deleteTopic(topicId);
-
-    this.logger.log(`Deleted topic ${topicId}`);
-
-    return new HederaTransactionResponse(deleteTopicResponse).parse();
-  }
-
-  public async getTopicInformation(topicId: string, accountId?: string): Promise<TopicInfo> {
-    this.logger.log(`Getting information for topic ${topicId}`);
-
-    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
-
-    return await new HederaStub(
-      account
-    ).getTopicInformation(topicId);
-  }
-
-  /*
-   *
-   *Encrypted topics
-   *
-   */
+export class EncryptedTopicService {
+  private readonly logger: Logger = new Logger(EncryptedTopicService.name);
 
   // eslint-disable-next-line  @typescript-eslint/prefer-readonly-parameter-types
   public async createEncryptedTopic(createEncryptedTopicDTO: CreateEncryptedTopicDTO, accountId?: string): Promise<IHederaNetworkResponse> {

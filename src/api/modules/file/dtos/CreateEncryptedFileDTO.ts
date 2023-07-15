@@ -1,5 +1,5 @@
 import {CreateUpdateAppendFileDTO} from './CreateUpdateAppendFileDTO';
-import {TopicParticipantDTO} from '../../topic/dtos/TopicParticipantDTO';
+import {TopicParticipantDTO} from '../../encryptedtopic/dtos/TopicParticipantDTO';
 import {ApiProperty} from '@nestjs/swagger';
 
 export class CreateEncryptedFileDTO extends CreateUpdateAppendFileDTO {
