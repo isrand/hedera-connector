@@ -1,6 +1,6 @@
 import {IWallet} from '../interfaces/IWallet';
 import {Account} from '../support/Account';
-import {NodeCredentialsLoader} from '../common/NodeCredentialsLoader';
+import {NodeCredentials} from '../common/NodeCredentials';
 import {Logger} from '@nestjs/common';
 import {CouchDBAdapter} from './support/CouchDBAdapter';
 import {Configuration} from '../../configuration/Configuration';
@@ -25,7 +25,7 @@ export class CouchDBWallet implements IWallet {
   public async initializeNodeAccount(): Promise<Account> {
     await this.initializeAccountsCollection();
 
-    return Promise.resolve(new NodeCredentialsLoader().loadNodeAccountFromCredentials());
+    return Promise.resolve(new NodeCredentials().loadNodeAccount());
   }
 
   public async loadAccount(accountId: string): Promise<Account> {

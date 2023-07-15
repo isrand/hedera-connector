@@ -1,5 +1,5 @@
-import {ICryptoAdapter} from './adapters/interfaces/ICryptoAdapter';
-import {Kyber} from './adapters/Kyber';
+import {ICryptoAdapter} from './interfaces/ICryptoAdapter';
+import {Kyber} from './adapters/kyber/Kyber';
 
 export class Crypto {
   public adapter: ICryptoAdapter;

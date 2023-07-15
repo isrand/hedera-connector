@@ -11,6 +11,8 @@ import {HederaConnectorGetAllAccountsResponse} from './responses/GetAllAccountsR
 import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse';
 import {HttpStatusCode} from 'axios';
 import {AccountResponse} from './responses/AccountResponse';
+import {KyberKeySize} from '../../../crypto/adapters/kyber/enums/KyberKeySize';
+import { KyberKeyPair } from "../../../crypto/adapters/kyber/support/KyberKeyPair";
 
 @Injectable()
 export class AccountService {
@@ -22,26 +24,10 @@ export class AccountService {
 
     this.logger.debug('Creating new Hedera account and associated Kyber keys...');
 
-    /* eslint-disable */
-    const kyber512KeyPair: Array<Array<number>> = new Crypto(512).adapter.generateKeyPair();
+    const kyber512KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber512).adapter.generateKeyPair();
+    const kyber768KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber768).adapter.generateKeyPair();
+    const kyber1024KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber1024).adapter.generateKeyPair();
 
-    if (!kyber512KeyPair[0] || !kyber512KeyPair[1]) {
-      throw new Error('Error generating Kyber key pair for size 512');
-    }
-
-    const kyber768KeyPair: Array<Array<number>> = new Crypto(768).adapter.generateKeyPair();
-
-    if (!kyber768KeyPair[0] || !kyber768KeyPair[1]) {
-      throw new Error('Error generating Kyber key pair for size 768');
-    }
-
-    const kyber1024KeyPair: Array<Array<number>> = new Crypto(1024).adapter.generateKeyPair();
-
-    if (!kyber1024KeyPair[0] || !kyber1024KeyPair[1]) {
-      throw new Error('Error generating Kyber key pair for size 1024');
-    }
-
-    /* eslint-enable */
     let createAccountResponse: IHederaCreateAccountResponse;
 
     try {
@@ -60,19 +46,19 @@ export class AccountService {
       createAccountResponse.hederaPrivateKey,
       [
         {
-          size: 512,
-          publicKey: Buffer.from(kyber512KeyPair[0]).toString('base64'),
-          privateKey: Buffer.from(kyber512KeyPair[1]).toString('base64')
+          size: KyberKeySize.Kyber512,
+          publicKey: kyber512KeyPair.publicKey,
+          privateKey: kyber512KeyPair.privateKey
         },
         {
-          size: 768,
-          publicKey: Buffer.from(kyber768KeyPair[0]).toString('base64'),
-          privateKey: Buffer.from(kyber768KeyPair[1]).toString('base64')
+          size: KyberKeySize.Kyber768,
+          publicKey: kyber768KeyPair.publicKey,
+          privateKey: kyber768KeyPair.privateKey
         },
         {
-          size: 1024,
-          publicKey: Buffer.from(kyber1024KeyPair[0]).toString('base64'),
-          privateKey: Buffer.from(kyber1024KeyPair[1]).toString('base64')
+          size: KyberKeySize.Kyber1024,
+          publicKey: kyber1024KeyPair.publicKey,
+          privateKey: kyber1024KeyPair.privateKey
         }
       ]
     ));
@@ -83,9 +69,9 @@ export class AccountService {
       payload: {
         hederaAccountId: createAccountResponse.hederaAccountId,
         hederaPublicKey: createAccountResponse.hederaPublicKey,
-        kyber512PublicKey: Buffer.from(kyber512KeyPair[0]).toString('base64'),
-        kyber768PublicKey: Buffer.from(kyber768KeyPair[0]).toString('base64'),
-        kyber1024PublicKey: Buffer.from(kyber1024KeyPair[0]).toString('base64')
+        kyber512PublicKey: kyber512KeyPair.publicKey,
+        kyber768PublicKey: kyber768KeyPair.publicKey,
+        kyber1024PublicKey: kyber1024KeyPair.publicKey
       }
     };
   }

@@ -1,15 +1,16 @@
 import {Logger} from '@nestjs/common';
 import * as fs from 'fs';
-import {IKyberKeyPair} from '../interfaces/IKyberKeyPair';
+import {IKyberKeyPair} from '../../crypto/adapters/kyber/interfaces/IKyberKeyPair';
 import {Crypto} from '../../crypto/Crypto';
 import {Account} from '../support/Account';
+import {KyberKeySize} from '../../crypto/adapters/kyber/enums/KyberKeySize';
 
-export class NodeCredentialsLoader {
-  private readonly logger: Logger = new Logger(NodeCredentialsLoader.name);
+export class NodeCredentials {
+  private readonly logger: Logger = new Logger(NodeCredentials.name);
 
   private readonly pathToCredentialsDirectory: string = '/opt/credentials';
 
-  public loadNodeAccountFromCredentials(): Account {
+  public loadNodeAccount(): Account {
     return new Account(
       this.loadNodeHederaAccountId(),
       this.loadNodeHederaPublicKey(),
@@ -30,11 +31,10 @@ export class NodeCredentialsLoader {
     return fs.readFileSync(`${this.pathToCredentialsDirectory}/hedera_private_key`).toString();
   }
 
-  /* eslint-disable */
   private loadNodeKyberKeys(): Array<IKyberKeyPair> {
     const keys: Array<IKyberKeyPair> = [];
 
-    for (const size of [512, 768, 1024]) {
+    for (const size of [KyberKeySize.Kyber512, KyberKeySize.Kyber768, KyberKeySize.Kyber1024]) {
       this.logger.debug(`Loading Kyber private / public key pair of size ${size}`);
       const publicKey = fs.readFileSync(`${this.pathToCredentialsDirectory}/kyber_${size}_public_key`).toString();
       const privateKey = fs.readFileSync(`${this.pathToCredentialsDirectory}/kyber_${size}_private_key`).toString();
@@ -45,8 +45,8 @@ export class NodeCredentialsLoader {
 
         keys.push({
           size: size,
-          publicKey: Buffer.from(keyPair[0]).toString('base64'),
-          privateKey: Buffer.from(keyPair[1]).toString('base64')
+          publicKey: keyPair.publicKey,
+          privateKey: keyPair.privateKey
         });
 
         continue;
@@ -59,10 +59,8 @@ export class NodeCredentialsLoader {
       });
 
       this.logger.debug(`Loaded Kyber private / public key pair of size ${size}`);
-
     }
 
     return keys;
   }
-  /* eslint-enable */
 }
