@@ -5,7 +5,5 @@ version: 1.0.0
 dependencies:
   - name: hedera-connector-database
     version: 1.0.0
-    repository: "file://./charts/couchdb"
   - name: hedera-connector
     version: 1.0.0
-    repository: "file://./charts/hedera-connector"
