@@ -11,8 +11,8 @@ import {HederaConnectorGetAllAccountsResponse} from './responses/GetAllAccountsR
 import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse';
 import {HttpStatusCode} from 'axios';
 import {AccountResponse} from './responses/AccountResponse';
-import {IKeyPair} from '../../../crypto/interfaces/IKeyPair';
 import {KyberKeySize} from '../../../crypto/adapters/kyber/enums/KyberKeySize';
+import { KyberKeyPair } from "../../../crypto/adapters/kyber/support/KyberKeyPair";
 
 @Injectable()
 export class AccountService {
@@ -24,9 +24,9 @@ export class AccountService {
 
     this.logger.debug('Creating new Hedera account and associated Kyber keys...');
 
-    const kyber512KeyPair: IKeyPair = new Crypto(KyberKeySize.Kyber512).adapter.generateKeyPair();
-    const kyber768KeyPair: IKeyPair = new Crypto(KyberKeySize.Kyber768).adapter.generateKeyPair();
-    const kyber1024KeyPair: IKeyPair = new Crypto(KyberKeySize.Kyber1024).adapter.generateKeyPair();
+    const kyber512KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber512).adapter.generateKeyPair();
+    const kyber768KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber768).adapter.generateKeyPair();
+    const kyber1024KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber1024).adapter.generateKeyPair();
 
     let createAccountResponse: IHederaCreateAccountResponse;
 

@@ -6,10 +6,10 @@ import {IEncryptedTopicConfiguration} from '../../api/modules/topic/interfaces/I
 import {ITopicConfiguration} from '../../api/modules/topic/interfaces/ITopicConfiguration';
 import {Timestamp} from '@hashgraph/sdk';
 import {ITopicMessage} from '../../api/modules/topic/interfaces/ITopicMessage';
-import { IKeyPair } from "./IKeyPair";
+import { KyberKeyPair } from "../adapters/kyber/support/KyberKeyPair";
 
 export interface ICryptoAdapter {
-  generateKeyPair: () => IKeyPair;
+  generateKeyPair: () => KyberKeyPair;
   encryptMessage: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string) => Readonly<IEncryptedTopicMessage>;
   encryptTopicConfiguration: (participants: ReadonlyArray<Readonly<ITopicParticipant>>, dataToEncrypt: string, submitKey: string) => Readonly<IEncryptedTopicConfiguration>;
   decryptTopicConfigurationMessage: (encryptedTopicConfigurationMessage: Readonly<IEncryptedTopicConfiguration>, privateKey: string) => Readonly<ITopicConfiguration>;
