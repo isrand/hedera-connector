@@ -1,9 +1,9 @@
 /* eslint-disable */
 
-import {ITopicParticipant} from '../../api/modules/topic/interfaces/ITopicParticipant';
-import {IEncryptedTopicMessage} from '../../api/modules/topic/interfaces/IEncryptedTopicMessage';
-import {IEncryptedTopicConfiguration} from '../../api/modules/topic/interfaces/IEncryptedTopicConfiguration';
-import {ITopicConfiguration} from '../../api/modules/topic/interfaces/ITopicConfiguration';
+import {ITopicParticipant} from '../../api/modules/encryptedtopic/interfaces/ITopicParticipant';
+import {IEncryptedTopicMessage} from '../../api/modules/encryptedtopic/interfaces/IEncryptedTopicMessage';
+import {IEncryptedTopicConfiguration} from '../../api/modules/encryptedtopic/interfaces/IEncryptedTopicConfiguration';
+import {ITopicConfiguration} from '../../api/modules/encryptedtopic/interfaces/ITopicConfiguration';
 import {Timestamp} from '@hashgraph/sdk';
 import {ITopicMessage} from '../../api/modules/topic/interfaces/ITopicMessage';
 import { KyberKeyPair } from "../adapters/kyber/support/KyberKeyPair";

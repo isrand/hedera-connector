@@ -12,7 +12,7 @@ import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse'
 import {HttpStatusCode} from 'axios';
 import {AccountResponse} from './responses/AccountResponse';
 import {KyberKeySize} from '../../../crypto/adapters/kyber/enums/KyberKeySize';
-import { KyberKeyPair } from "../../../crypto/adapters/kyber/support/KyberKeyPair";
+import {KyberKeyPair} from '../../../crypto/adapters/kyber/support/KyberKeyPair';
 
 @Injectable()
 export class AccountService {
