@@ -95,15 +95,13 @@ export class AccountService {
     const accounts: Array<AccountResponse> = [];
 
     for (const account of accountsInWallet) {
-      const accountResponse: AccountResponse = {
+      accounts.push({
         hederaAccountId: account.getHederaAccountId(),
         hederaPublicKey: account.getHederaPublicKey(),
         kyber512PublicKey: account.getKyberKeyPair(512).publicKey,
         kyber768PublicKey: account.getKyberKeyPair(768).publicKey,
         kyber1024PublicKey: account.getKyberKeyPair(1024).publicKey
-      };
-
-      accounts.push(accountResponse);
+      });
     }
 
     return {
