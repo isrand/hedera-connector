@@ -17,53 +17,30 @@ spec:
         component: {{ .Release.Name }}
     spec:
       volumes:
-
-        {{- if (eq .Values.wallet.type "filesystem") }}
+        {{- if (eq .Values.global.wallet.type "filesystem") }}
         - name: wallet
           persistentVolumeClaim:
             claimName: wallet
         {{- end }}
-
         - name: node-credentials
           secret:
             secretName: node-credentials
-
       containers:
-
-        # CouchDB Wallet
-        {{- if and (eq .Values.wallet.type "couchdb") (eq .Values.settings.local true) }}
-        - name: hedera-connector-database
-          image: couchdb:3.3.2
-          ports:
-            - containerPort: 5984
-          env:
-            - name: COUCHDB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: database-credentials
-                  key: username
-            - name: COUCHDB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: database-credentials
-                  key: password
-        {{- end }}
-
         # Hedera-Connector microservice
         - name: hedera-connector
           image: localhost:5000/hedera-connector:1.0.0
           imagePullPolicy: Always
           env:
             - name: NODE_HEDERA_ACCOUNT_ID
-              value: {{ .Values.hedera.account.id }}
+              value: {{ .Values.global.hedera.account.id }}
             - name: WALLET_TYPE
-              value: {{ .Values.wallet.type }}
-            {{- if (eq .Values.wallet.type "couchdb") }}
+              value: {{ .Values.global.wallet.type }}
+            {{- if (eq .Values.global.wallet.type "couchdb") }}
             - name: COUCHDB_URL
-              {{- if (eq .Values.settings.local true) }}
-              value: "http://localhost:5984"
+              {{- if (eq .Values.global.settings.local true) }}
+              value: "http://hedera-connector-database:5984"
               {{- else }}
-              value: {{ .Values.wallet.couchdb.url }}
+              value: {{ .Values.global.wallet.couchdb.url }}
               {{- end }}
             - name: COUCHDB_USER
               valueFrom:
@@ -81,11 +58,9 @@ spec:
           ports:
             - containerPort: 4000
           volumeMounts:
-
-            {{- if (eq .Values.wallet.type "filesystem") }}
+            {{- if (eq .Values.global.wallet.type "filesystem") }}
             - name: wallet
               mountPath: /opt/wallet
             {{- end }}
-
             - name: node-credentials
               mountPath: /opt/credentials
