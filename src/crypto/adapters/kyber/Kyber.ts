@@ -37,15 +37,12 @@ export class Kyber implements ICryptoAdapter {
       // eslint-disable-next-line id-length
       b: [],
       // eslint-disable-next-line id-length
-      c: [],
-      // eslint-disable-next-line id-length
       h: this.calculateSHA256Hash(dataToEncrypt)
     };
 
     for (const participant of participants) {
       const kyberPublicKey = Buffer.from(participant.kyberPublicKey, 'base64');
       let symmetricAndEncapsulatedKey: Array<Array<number>> = this.getSymmetricAndEncapsulatedKey(kyberPublicKey);
-      let initVector: Buffer = this.getInitVector(kyberPublicKey);
 
       const encapsulatedSymmetricKey: Array<number> | undefined = symmetricAndEncapsulatedKey[0];
       const symmetricKey: Array<number> | undefined = symmetricAndEncapsulatedKey[1];
@@ -54,9 +51,10 @@ export class Kyber implements ICryptoAdapter {
         throw new Error('Error encrypting using kyber public key');
       }
 
-      finalObject.a.push(this.symmetricEncryptData(dataToEncrypt, symmetricKey, initVector));
+      let initVector: Buffer = this.getInitVectorFromSymmetricKeyNumberArray(symmetricKey);
+
+      finalObject.a.push(this.symmetricEncryptData(dataToEncrypt, Buffer.from(symmetricKey), initVector));
       finalObject.b.push(Buffer.from(encapsulatedSymmetricKey).toString('base64'));
-      finalObject.c.push(Buffer.from(initVector).toString('base64'));
     }
 
     return finalObject;
@@ -71,8 +69,6 @@ export class Kyber implements ICryptoAdapter {
       // eslint-disable-next-line id-length
       c: [],
       // eslint-disable-next-line id-length
-      d: [],
-      // eslint-disable-next-line id-length
       s: this.keySize,
       // eslint-disable-next-line id-length
       h: this.calculateSHA256Hash(dataToEncrypt)
@@ -81,7 +77,6 @@ export class Kyber implements ICryptoAdapter {
     for (const participant of participants) {
       const kyberPublicKey = Buffer.from(participant.kyberPublicKey, 'base64');
       let symmetricAndEncapsulatedKey: Array<Array<number>> = this.getSymmetricAndEncapsulatedKey(kyberPublicKey);
-      let initVector: Buffer = this.getInitVector(kyberPublicKey);
 
       const encapsulatedSymmetricKey: Array<number> | undefined = symmetricAndEncapsulatedKey[0];
       const symmetricKey: Array<number> | undefined = symmetricAndEncapsulatedKey[1];
@@ -90,10 +85,11 @@ export class Kyber implements ICryptoAdapter {
         throw new Error('Error encrypting using kyber public key');
       }
 
-      finalObject.a.push(this.symmetricEncryptData(dataToEncrypt, symmetricKey, initVector));
+      let initVector: Buffer = this.getInitVectorFromSymmetricKeyNumberArray(symmetricKey);
+
+      finalObject.a.push(this.symmetricEncryptData(dataToEncrypt, Buffer.from(symmetricKey), initVector));
       finalObject.b.push(Buffer.from(encapsulatedSymmetricKey).toString('base64'));
-      finalObject.c.push(Buffer.from(initVector).toString('base64'));
-      finalObject.d.push(this.symmetricEncryptData(submitKey, symmetricKey, initVector));
+      finalObject.c.push(this.symmetricEncryptData(submitKey, Buffer.from(symmetricKey), initVector));
     }
 
     return finalObject;
@@ -102,17 +98,16 @@ export class Kyber implements ICryptoAdapter {
   public decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration, privateKey: string): ITopicConfiguration {
     for (const encryptedPayload of encryptedTopicConfigurationMessage.a) {
       for (const encapsulatedSymmetricKey of encryptedTopicConfigurationMessage.b) {
-        for (const initVector of encryptedTopicConfigurationMessage.c) {
-          try {
-            const symmetricKey = this.decryptEncapsulatedSymmetricKey(encapsulatedSymmetricKey, privateKey);
-            const decryptedData = this.symmetricDecryptData(encryptedPayload, symmetricKey, initVector);
+        try {
+          const symmetricKey = this.decryptEncapsulatedSymmetricKey(encapsulatedSymmetricKey, privateKey);
+          const initVector = this.getInitVectorFromSymmetricKeyNumberArray(symmetricKey);
+          const decryptedData = this.symmetricDecryptData(encryptedPayload, symmetricKey, initVector);
 
-            if (this.calculateSHA256Hash(decryptedData) === encryptedTopicConfigurationMessage.h) {
-              return JSON.parse(decryptedData) as ITopicConfiguration;
-            }
-          } catch (error: unknown) {
-            continue;
+          if (this.calculateSHA256Hash(decryptedData) === encryptedTopicConfigurationMessage.h) {
+            return JSON.parse(decryptedData) as ITopicConfiguration;
           }
+        } catch (error: unknown) {
+          continue;
         }
       }
     }
@@ -124,21 +119,20 @@ export class Kyber implements ICryptoAdapter {
   public decryptTopicMessage(encryptedTopicMessage: IEncryptedTopicMessage, consensusTimeStamp: Timestamp, sequenceNumber: number, privateKey: string): ITopicMessage {
     for (const encryptedPayload of encryptedTopicMessage.a) {
       for (const encapsulatedSymmetricKey of encryptedTopicMessage.b) {
-        for (const initVector of encryptedTopicMessage.c) {
-          try {
-            const symmetricKey = this.decryptEncapsulatedSymmetricKey(encapsulatedSymmetricKey, privateKey);
-            const decryptedData = this.symmetricDecryptData(encryptedPayload, symmetricKey, initVector);
+        try {
+          const symmetricKey = this.decryptEncapsulatedSymmetricKey(encapsulatedSymmetricKey, privateKey);
+          const initVector = this.getInitVectorFromSymmetricKeyNumberArray(symmetricKey);
+          const decryptedData = this.symmetricDecryptData(encryptedPayload, symmetricKey, initVector);
 
-            if (this.calculateSHA256Hash(decryptedData) === encryptedTopicMessage.h) {
-              return {
-                sequenceNumber: sequenceNumber,
-                payload: decryptedData,
-                timestamp: consensusTimeStamp.toDate()
-              };
-            }
-          } catch (error: unknown) {
-            continue;
+          if (this.calculateSHA256Hash(decryptedData) === encryptedTopicMessage.h) {
+            return {
+              sequenceNumber: sequenceNumber,
+              payload: decryptedData,
+              timestamp: consensusTimeStamp.toDate()
+            };
           }
+        } catch (error: unknown) {
+          continue;
         }
       }
     }
@@ -152,7 +146,7 @@ export class Kyber implements ICryptoAdapter {
     return hash.digest('hex');
   }
 
-  private symmetricEncryptData(dataToEncrypt: string, symmetricKey: Array<number>, initVector: Buffer): string {
+  private symmetricEncryptData(dataToEncrypt: string, symmetricKey: Buffer, initVector: Buffer): string {
     const messageCipher = crypto.createCipheriv('AES256', Buffer.from(symmetricKey), Buffer.from(initVector));
     let encryptedData = messageCipher.update(dataToEncrypt, 'utf8', 'base64');
     encryptedData += messageCipher.final('base64');
@@ -160,8 +154,8 @@ export class Kyber implements ICryptoAdapter {
     return encryptedData;
   }
 
-  private symmetricDecryptData(dataToDecrypt: string, symmetricKey: Buffer, initVector: string) {
-    const decipher = crypto.createDecipheriv('AES256', symmetricKey, Buffer.from(String(initVector), 'base64'));
+  private symmetricDecryptData(dataToDecrypt: string, symmetricKey: Buffer, initVector: Buffer) {
+    const decipher = crypto.createDecipheriv('AES256', Buffer.from(symmetricKey), Buffer.from(initVector));
     let decryptedData = decipher.update(dataToDecrypt, 'base64', 'utf-8');
     decryptedData += decipher.final('utf8');
 
@@ -192,16 +186,7 @@ export class Kyber implements ICryptoAdapter {
     }
   }
 
-  private getInitVector(publicKey: Buffer): Buffer {
-    switch (this.keySize) {
-      case KyberKeySize.Kyber512:
-        return Buffer.from(kyber.Encrypt512(publicKey)[0].slice(0, 16));
-      case KyberKeySize.Kyber768:
-        return Buffer.from(kyber.Encrypt768(publicKey)[0].slice(0, 16));
-      case KyberKeySize.Kyber1024:
-        return Buffer.from(kyber.Encrypt1024(publicKey)[0].slice(0, 16));
-      default:
-        return Buffer.from([]);
-    }
+  private getInitVectorFromSymmetricKeyNumberArray(symmetricKey: Array<number>): Buffer {
+    return Buffer.from(symmetricKey.filter((_, index) => index % 2 === 0))
   }
 }
