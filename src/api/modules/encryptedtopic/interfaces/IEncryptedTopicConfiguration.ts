@@ -14,13 +14,13 @@ import {IEncryptedObject} from './IEncryptedObject';
 export interface IEncryptedTopicConfiguration extends IEncryptedObject {
 
   /*
-   * The field "d" is an array containing the encrypted submit keys.
+   * The field "c" is an array containing the encrypted submit keys.
    * Submit keys MUST be used to sign a topic message send transaction.
    * The submit keys are also encrypted with each participant's public key,
    * giving the participants implicit access to the topic.
    */
   // eslint-disable-next-line id-blacklist
-  d: Array<string>;
+  c: Array<string>;
 
   /*
    * The field "s" determines the size of the encryption keys
