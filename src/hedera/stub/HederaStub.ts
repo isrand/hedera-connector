@@ -22,7 +22,7 @@ import {IHederaStub} from './interfaces/IHederaStub';
 import {IGetMessageFromTopicResponse} from '../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {InternalServerErrorException} from '@nestjs/common';
 import * as Long from 'long';
-import {IHederaCreateAccountResponse} from '../../api/modules/account/interfaces/IHederaCreateAccountResponse';
+import {IHederaCreateAccountResponse} from '../responses/interfaces/IHederaCreateAccountResponse';
 import {Account} from '../../wallet/support/Account';
 
 /*
@@ -55,7 +55,7 @@ export class HederaStub implements IHederaStub {
     await transaction.freezeWithSigner(this.hederaWallet);
     await this.signWithSigner(transaction, this.hederaWallet);
 
-    const response = await this.executeWithSigner(transaction, this.hederaWallet);
+    const response: IHederaTransactionResponse = await this.executeWithSigner(transaction, this.hederaWallet);
 
     if (!response.receipt.accountId) {
       throw new Error('Error getting new account ID from the transaction response.');

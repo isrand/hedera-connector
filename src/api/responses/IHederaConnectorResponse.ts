@@ -1,5 +1,6 @@
 export interface IHederaConnectorResponse {
-  response: unknown;
-  receipt: unknown;
-  record: unknown;
+  statusCode: number;
+  payload: unknown;
+  message?: string;
+  error?: string;
 }

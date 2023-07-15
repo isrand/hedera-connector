@@ -1,22 +1,23 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable, Logger, NotFoundException, PreconditionFailedException} from '@nestjs/common';
 import {HederaStub} from '../../../hedera/stub/HederaStub';
 import {Crypto} from '../../../crypto/Crypto';
-import {IHederaCreateAccountResponse} from './interfaces/IHederaCreateAccountResponse';
-import {CreateAccountDTO} from './dto/CreateAccountDTO';
+import {IHederaCreateAccountResponse} from '../../../hedera/responses/interfaces/IHederaCreateAccountResponse';
+import {CreateAccountRequest} from './requests/CreateAccountRequest';
 import {Wallet} from '../../../wallet/Wallet';
-import {CreateAccountResponse} from './responses/CreateAccountResponse';
+import {HederaConnectorCreateAccountResponse} from './responses/CreateAccountResponse';
 import {Account} from '../../../wallet/support/Account';
 import {Configuration} from '../../../configuration/Configuration';
-import {GetAllAccountsResponse} from './responses/GetAllAccountsResponse';
-import {IRedactedAccount} from './interfaces/IRedactedAccount';
-import {GetAccountResponse} from './responses/GetAccountResponse';
+import {HederaConnectorGetAllAccountsResponse} from './responses/GetAllAccountsResponse';
+import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse';
+import {HttpStatusCode} from 'axios';
+import {AccountResponse} from './responses/AccountResponse';
 
 @Injectable()
 export class AccountService {
   private readonly logger: Logger = new Logger(AccountService.name);
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async createAccount(createAccountDTO: CreateAccountDTO): Promise<CreateAccountResponse> {
+  public async createAccount(createAccountRequest: CreateAccountRequest): Promise<HederaConnectorCreateAccountResponse> {
     const account = await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
     this.logger.debug('Creating new Hedera account and associated Kyber keys...');
@@ -39,13 +40,21 @@ export class AccountService {
     if (!kyber1024KeyPair[0] || !kyber1024KeyPair[1]) {
       throw new Error('Error generating Kyber key pair for size 1024');
     }
+
     /* eslint-enable */
+    let createAccountResponse: IHederaCreateAccountResponse;
 
-    const createAccountResponse: IHederaCreateAccountResponse = await new HederaStub(
-      account
-    ).createAccount(createAccountDTO.initialBalance);
+    try {
+      createAccountResponse = await new HederaStub(
+        account
+      ).createAccount(createAccountRequest.initialBalance);
+    } catch (error: unknown) {
+      this.logger.error(error);
 
-    const newAccount: Account = new Account(
+      throw new PreconditionFailedException('Node account does not have enough balance to create new account.');
+    }
+
+    await Wallet.storeAccount(new Account(
       createAccountResponse.hederaAccountId,
       createAccountResponse.hederaPublicKey,
       createAccountResponse.hederaPrivateKey,
@@ -66,25 +75,27 @@ export class AccountService {
           privateKey: Buffer.from(kyber1024KeyPair[1]).toString('base64')
         }
       ]
-    );
-
-    await Wallet.storeAccount(newAccount);
+    ));
 
     return {
-      hederaAccountId: newAccount.getHederaAccountId(),
-      hederaPublicKey: newAccount.getHederaPublicKey(),
-      kyber512PublicKey: Buffer.from(kyber512KeyPair[0]).toString('base64'),
-      kyber768PublicKey: Buffer.from(kyber768KeyPair[0]).toString('base64'),
-      kyber1024PublicKey: Buffer.from(kyber1024KeyPair[0]).toString('base64')
+      statusCode: HttpStatusCode.Created,
+      message: 'Account created.',
+      payload: {
+        hederaAccountId: createAccountResponse.hederaAccountId,
+        hederaPublicKey: createAccountResponse.hederaPublicKey,
+        kyber512PublicKey: Buffer.from(kyber512KeyPair[0]).toString('base64'),
+        kyber768PublicKey: Buffer.from(kyber768KeyPair[0]).toString('base64'),
+        kyber1024PublicKey: Buffer.from(kyber1024KeyPair[0]).toString('base64')
+      }
     };
   }
 
-  public async getAllAccounts(): Promise<GetAllAccountsResponse> {
-    const accounts: Array<Account> = await Wallet.getAllAccounts();
-    const redactedAccounts: Array<IRedactedAccount> = [];
+  public async getAllAccounts(): Promise<HederaConnectorGetAllAccountsResponse> {
+    const accountsInWallet: Array<Account> = await Wallet.getAllAccounts();
+    const accounts: Array<AccountResponse> = [];
 
-    for (const account of accounts) {
-      const redactedAccount: IRedactedAccount = {
+    for (const account of accountsInWallet) {
+      const redactedAccount: AccountResponse = {
         hederaAccountId: account.getHederaAccountId(),
         hederaPublicKey: account.getHederaPublicKey(),
         kyber512PublicKey: account.getKyberKeyPair(512).publicKey,
@@ -92,19 +103,33 @@ export class AccountService {
         kyber1024PublicKey: account.getKyberKeyPair(1024).publicKey
       };
 
-      redactedAccounts.push(redactedAccount);
+      accounts.push(redactedAccount);
     }
 
     return {
-      accounts: redactedAccounts
+      statusCode: HttpStatusCode.Ok,
+      message: 'Accounts retrieved.',
+      payload: {
+        accounts: accounts
+      }
     };
   }
 
-  public async getAccount(accountId: string): Promise<GetAccountResponse> {
-    const account: Account = await Wallet.getAccount(accountId);
+  public async getAccount(accountId: string): Promise<HederaConnectorGetAccountResponse> {
+    let account: Account;
+
+    try {
+      account = await Wallet.getAccount(accountId);
+    } catch (error: unknown) {
+      this.logger.error(error);
+
+      throw new NotFoundException('Account not found in node wallet.');
+    }
 
     return {
-      account: {
+      statusCode: HttpStatusCode.Ok,
+      message: 'Account retrieved.',
+      payload: {
         hederaAccountId: account.getHederaAccountId(),
         hederaPublicKey: account.getHederaPublicKey(),
         kyber512PublicKey: account.getKyberKeyPair(512).publicKey,

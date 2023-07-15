@@ -1,5 +1,5 @@
 import {IHederaTransactionResponse} from './interfaces/IHederaTransactionResponse';
-import {IHederaConnectorResponse} from '../../api/responses/IHederaConnectorResponse';
+import {IHederaNetworkResponse} from './interfaces/IHederaNetworkResponse';
 import {
   TransactionReceipt,
   TransactionRecord,
@@ -15,7 +15,7 @@ export class HederaTransactionResponse {
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public constructor(private readonly hederaTransactionResponse: Readonly<IHederaTransactionResponse>) { }
 
-  public parse(): IHederaConnectorResponse {
+  public parse(): IHederaNetworkResponse {
     return {
       response: this.parseTransactionResponse(this.hederaTransactionResponse.response),
       receipt: this.parseTransactionReceipt(this.hederaTransactionResponse.receipt),

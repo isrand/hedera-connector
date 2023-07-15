@@ -2,7 +2,7 @@ import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {Body, Controller, Delete, Get, Param, Post, Query} from '@nestjs/common';
 import {TopicService} from './TopicService';
 import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
-import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
+import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {TopicInfo} from '@hashgraph/sdk';
 import {SendMessageToEncryptedTopicDTO} from './dtos/SendMessageToEncryptedTopicDTO';
 import {Configuration} from '../../../configuration/Configuration';
@@ -32,7 +32,7 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
   })
   @Post('/encryptedtopic')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async createEncryptedTopic(@Body() createEncryptedTopicDTO: CreateEncryptedTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async createEncryptedTopic(@Body() createEncryptedTopicDTO: CreateEncryptedTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.topicService.createEncryptedTopic(createEncryptedTopicDTO, accountId);
   }
 
@@ -77,7 +77,7 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
     example: Configuration.nodeHederaAccountId
   })
   @Delete('/encryptedtopic/:id')
-  public async deleteEncryptedTopic(@Param('id') topicId: string, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async deleteEncryptedTopic(@Param('id') topicId: string, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.topicService.deleteTopic(topicId, accountId);
   }
 

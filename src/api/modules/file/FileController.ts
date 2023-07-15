@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
 import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {FileService} from './FileService';
-import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
+import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {CreateUpdateAppendFileDTO} from './dtos/CreateUpdateAppendFileDTO';
 import {Configuration} from '../../../configuration/Configuration';
 
@@ -25,7 +25,7 @@ The endpoint accepts a request body with the contents of the file, but can also 
   })
   @Post('/file')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async createPublicFile(@Body() createPublicFileDTO: CreateUpdateAppendFileDTO, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async createPublicFile(@Body() createPublicFileDTO: CreateUpdateAppendFileDTO, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.fileService.createPublicFile(createPublicFileDTO, accountId);
   }
 
@@ -56,7 +56,7 @@ The endpoint accepts a request body with the contents of the file, but can also 
   })
   @Put('/file/:id')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async updatePublicFile(@Param('id') fileId: string, @Body() createPublicFileDTO: CreateUpdateAppendFileDTO, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async updatePublicFile(@Param('id') fileId: string, @Body() createPublicFileDTO: CreateUpdateAppendFileDTO, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.fileService.updatePublicFile(fileId, createPublicFileDTO, accountId);
   }
 
@@ -71,7 +71,7 @@ The endpoint accepts a request body with the contents of the file, but can also 
     example: Configuration.nodeHederaAccountId
   })
   @Put('/file/:id/append/:contents')
-  public async appendToPublicFile(@Param('id') fileId: string, @Param('contents') contents: string, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async appendToPublicFile(@Param('id') fileId: string, @Param('contents') contents: string, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.fileService.appendToPublicFile(fileId, contents, accountId);
   }
 
@@ -86,7 +86,7 @@ The endpoint accepts a request body with the contents of the file, but can also 
     example: Configuration.nodeHederaAccountId
   })
   @Delete('/file/:id')
-  public async deletePublicFile(@Param('id') fileId: string, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async deletePublicFile(@Param('id') fileId: string, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.fileService.deleteFile(fileId, accountId);
   }
 }

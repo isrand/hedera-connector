@@ -18,7 +18,7 @@ export class Main {
       .build();
     const swaggerDocument = SwaggerModule.createDocument(app, documentation);
     SwaggerModule.setup('swagger', app, swaggerDocument, {
-      customCss: '.topbar {display:none}',
+      customCss: '.topbar {display:none}; .swagger-ui section.models.is-open {display:none}; .swagger-ui section.models {display:none};',
       customSiteTitle: 'Hedera Hashgraph Connector'
     });
 
