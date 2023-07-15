@@ -1,15 +1,17 @@
-settings:
-  local: true
+global:
+  settings:
+    local: true
 
-hedera:
-  account:
-    id:
-    # DER-encoded keys provided by Hedera
-    public_key:
-    private_key:
+  hedera:
+    account:
+      id:
+      # DER-encoded keys provided by Hedera
+      public_key:
+      private_key:
 
-wallet:
-  # "couchdb" or "filesystem"
-  type: "filesystem"
-  couchdb:
-    url: ""
+  wallet:
+    type: "filesystem" # "couchdb" or "filesystem"
+    couchdb:
+      url: ""
+      username: ""
+      password: ""
