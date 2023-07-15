@@ -19,7 +19,6 @@ spec:
     spec:
       volumes:
       containers:
-        # CouchDB Wallet
         - name: hedera-connector-database
           image: couchdb:3.3.2
           ports:

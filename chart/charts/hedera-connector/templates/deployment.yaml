@@ -26,7 +26,6 @@ spec:
           secret:
             secretName: node-credentials
       containers:
-        # Hedera-Connector microservice
         - name: hedera-connector
           image: localhost:5000/hedera-connector:1.0.0
           imagePullPolicy: Always
