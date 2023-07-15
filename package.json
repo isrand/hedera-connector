@@ -10,7 +10,7 @@
     "buildDockerImage": "nest build && docker build -t localhost:5000/hedera-connector:1.0.0 .",
     "generateKyberKeys": "node utils/kyber/generate-keys.js",
     "push": "docker push localhost:5000/hedera-connector:1.0.0",
-    "start": "helm upgrade --install hedera-connector ./chart --wait",
+    "start": "helm upgrade --install hedera-connector chart --wait",
     "stop": "helm delete hedera-connector",
     "restart": "npm run stop && npm run buildDockerImage && npm run push && npm run start",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

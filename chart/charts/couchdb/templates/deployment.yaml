@@ -1,0 +1,37 @@
+{{- if and (eq .Values.global.wallet.type "couchdb") (eq .Values.global.settings.local true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    "helm.sh/chart": {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+  name: hedera-connector-database
+  labels:
+    component: hedera-connector-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: hedera-connector-database
+  template:
+    metadata:
+      labels:
+        component: hedera-connector-database
+    spec:
+      volumes:
+      containers:
+        - name: hedera-connector-database
+          image: couchdb:3.3.2
+          ports:
+            - containerPort: 5984
+          env:
+            - name: COUCHDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: COUCHDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+{{- end }}

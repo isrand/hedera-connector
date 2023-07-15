@@ -2,3 +2,8 @@ apiVersion: v2
 name: hedera-connector
 type: application
 version: 1.0.0
+dependencies:
+  - name: hedera-connector-database
+    version: 1.0.0
+  - name: hedera-connector
+    version: 1.0.0

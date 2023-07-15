@@ -1,0 +1,14 @@
+{{- if and (eq .Values.global.wallet.type "couchdb") (eq .Values.global.settings.local true) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: hedera-connector-database
+spec:
+  selector:
+    component: hedera-connector-database
+  ports:
+    - protocol: TCP
+      port: 5984
+      targetPort: 5984
+  type: ClusterIP
+{{- end }}
