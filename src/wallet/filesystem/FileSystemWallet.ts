@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import {IAccount} from '../interfaces/IAccount';
 import {IWallet} from '../interfaces/IWallet';
 import {Logger} from '@nestjs/common';
-import {NodeCredentialsLoader} from '../common/NodeCredentialsLoader';
+import {NodeCredentials} from '../common/NodeCredentials';
 import {Account} from '../support/Account';
 
 export class FileSystemWallet implements IWallet {
@@ -15,7 +15,7 @@ export class FileSystemWallet implements IWallet {
   }
 
   public async initializeNodeAccount(): Promise<Account> {
-    return Promise.resolve(new NodeCredentialsLoader().loadNodeAccountFromCredentials());
+    return Promise.resolve(new NodeCredentials().loadNodeAccount());
   }
 
   public async loadAccount(accountId: string): Promise<Account> {
