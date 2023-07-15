@@ -34,6 +34,6 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-chart/artifacts
+chart/charts/hedera-connector/artifacts
 
 chart/values.yaml
