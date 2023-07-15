@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, Param, Post, Query} from '@nestjs/common'
 import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {SendMessageToTopicDTO} from './dtos/SendMessageToTopicDTO';
 import {TopicService} from './TopicService';
-import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
+import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {TopicInfo} from '@hashgraph/sdk';
 import {Configuration} from '../../../configuration/Configuration';
 
@@ -23,7 +23,7 @@ export class TopicController {
     example: Configuration.nodeHederaAccountId
   })
   @Post('/topic')
-  public async createPublicTopic(@Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async createPublicTopic(@Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.topicService.createPublicTopic(accountId);
   }
 
@@ -53,7 +53,7 @@ export class TopicController {
     example: Configuration.nodeHederaAccountId
   })
   @Delete('/topic/:id')
-  public async deletePublicTopic(@Param('id') topicId: string, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async deletePublicTopic(@Param('id') topicId: string, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.topicService.deleteTopic(topicId, accountId);
   }
 
@@ -69,7 +69,7 @@ export class TopicController {
   })
   @Post('/topic/:id/message')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToPublicTopic(@Param('id') topicId: string, @Body() message: SendMessageToTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaConnectorResponse> {
+  public async sendMessageToPublicTopic(@Param('id') topicId: string, @Body() message: SendMessageToTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.topicService.sendMessageToPublicTopic(topicId, message.message, accountId);
   }
 

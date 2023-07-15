@@ -92,7 +92,6 @@
       "allowBlockStart": true
     }
   ],
-    "max-classes-per-file": "error",
     "max-statements-per-line": "error",
     "multiline-comment-style": [
     "error",
@@ -102,8 +101,12 @@
     "error",
     {
       "capIsNewExceptions": [
+        "ApiBody",
         "ApiTags",
         "ApiQuery",
+        "ApiNotFoundResponse",
+        "ApiResponse",
+        "ApiPreconditionFailedResponse",
         "ApiCreatedResponse",
         "ApiInternalServerErrorResponse",
         "ApiOkResponse",

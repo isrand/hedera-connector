@@ -1,6 +1,6 @@
 import {ApiProperty} from '@nestjs/swagger';
 
-export class CreateAccountDTO {
+export class CreateAccountRequest {
   @ApiProperty({
     type: Number,
     required: true,

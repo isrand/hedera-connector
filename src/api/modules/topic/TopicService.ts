@@ -5,7 +5,7 @@ import {IHederaTransactionResponse} from '../../../hedera/responses/interfaces/I
 import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
 import {ITopicConfiguration} from './interfaces/ITopicConfiguration';
 import {IEncryptedTopicConfiguration} from './interfaces/IEncryptedTopicConfiguration';
-import {IHederaConnectorResponse} from '../../responses/IHederaConnectorResponse';
+import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
 import {IGetMessageFromTopicResponse} from './responses/IGetMessageFromTopicResponse';
 import {TopicManager} from './support/TopicManager';
@@ -26,7 +26,7 @@ export class TopicService {
    *
    */
 
-  public async createPublicTopic(accountId?: string): Promise<IHederaConnectorResponse> {
+  public async createPublicTopic(accountId?: string): Promise<IHederaNetworkResponse> {
     this.logger.log('Creating new public topic');
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
@@ -45,7 +45,7 @@ export class TopicService {
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToPublicTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<IHederaConnectorResponse> {
+  public async sendMessageToPublicTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<IHederaNetworkResponse> {
     this.logger.log(`Sending message '${message}' to public topic ID ${topicId.replace('0.0.', '')}`);
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
@@ -69,7 +69,7 @@ export class TopicService {
     ).getMessageFromTopic(topicId, sequenceNumber);
   }
 
-  public async deleteTopic(topicId: string, accountId?: string): Promise<IHederaConnectorResponse> {
+  public async deleteTopic(topicId: string, accountId?: string): Promise<IHederaNetworkResponse> {
     this.logger.log(`Deleting topic ${topicId}`);
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
@@ -99,7 +99,7 @@ export class TopicService {
    */
 
   // eslint-disable-next-line  @typescript-eslint/prefer-readonly-parameter-types
-  public async createEncryptedTopic(createEncryptedTopicDTO: CreateEncryptedTopicDTO, accountId?: string): Promise<IHederaConnectorResponse> {
+  public async createEncryptedTopic(createEncryptedTopicDTO: CreateEncryptedTopicDTO, accountId?: string): Promise<IHederaNetworkResponse> {
     const submitKey = PrivateKey.generateED25519().toStringRaw();
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
