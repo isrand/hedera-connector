@@ -8,7 +8,7 @@ import {IEncryptedTopicConfiguration} from './interfaces/IEncryptedTopicConfigur
 import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
 import {IGetMessageFromTopicResponse} from '../topic/responses/IGetMessageFromTopicResponse';
-import {TopicManager} from './support/TopicManager';
+import {EncryptedTopicManager} from './support/EncryptedTopicManager';
 import {ITopicParticipant} from './interfaces/ITopicParticipant';
 import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
 import {Wallet} from '../../../wallet/Wallet';
@@ -69,16 +69,15 @@ export class EncryptedTopicService {
     if (createTopicResponse.receipt.topicId) {
       await new HederaStub(
         account
-      )
-        .sendMessageToTopic(
-          createTopicResponse.receipt.topicId.toString(),
-          Buffer.from(JSON.stringify(encryptedConfigurationMessage)).toString('base64'),
-          submitKey
-        );
+      ).sendMessageToTopic(
+        createTopicResponse.receipt.topicId.toString(),
+        Buffer.from(JSON.stringify(encryptedConfigurationMessage)).toString('base64'),
+        submitKey
+      );
 
-      this.logger.log(`Created new encrypted topic. Topic ID: ${JSON.stringify(createTopicResponse.receipt.topicId.toString().replace('0.0.', ''))}`);
+      this.logger.log(`Created new encrypted topic. Topic ID: ${JSON.stringify(createTopicResponse.receipt.topicId.toString())}`);
 
-      TopicManager.addTopic(createTopicResponse.receipt.topicId.toString().replace('0.0.', ''), topicConfigurationMessage);
+      await EncryptedTopicManager.addTopic(createTopicResponse.receipt.topicId.toString(), topicConfigurationMessage);
     }
 
     return new HederaTransactionResponse(createTopicResponse).parse();
@@ -86,7 +85,7 @@ export class EncryptedTopicService {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async sendMessageToEncryptedTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<unknown> {
-    this.logger.log(`Sending message '${message}' to encrypted, private topic ID ${topicId.replace('0.0.', '')}`);
+    this.logger.log(`Sending message '${message}' to encrypted, private topic ID ${topicId}`);
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
@@ -94,7 +93,7 @@ export class EncryptedTopicService {
      * First, check if we have cached the topic configuration
      * If it's not cached, do cache it
      */
-    if (!TopicManager.hasTopic(topicId)) {
+    if (!EncryptedTopicManager.hasTopic(topicId)) {
       // Get topic configuration message
       const firstTopicMessage: IGetMessageFromTopicResponse = await new HederaStub(
         account
@@ -110,10 +109,10 @@ export class EncryptedTopicService {
       const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
       // Cache in the TopicManager
-      TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
+      await EncryptedTopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
     }
 
-    const topicConfiguration = TopicManager.getTopicConfiguration(topicId);
+    const topicConfiguration = EncryptedTopicManager.getTopicConfiguration(topicId);
 
     // Create message object
     const messageObject = {
@@ -153,7 +152,7 @@ export class EncryptedTopicService {
       Buffer.from(topicConfiguration.submitKey).toString()
     );
 
-    this.logger.log(`Sent message to encrypted topic. Topic ID: ${topicId.replace('0.0.', '')}`);
+    this.logger.log(`Sent message to encrypted topic. Topic ID: ${topicId}`);
 
     return new HederaTransactionResponse(sendMessageToTopicResponse).parse();
   }
@@ -169,8 +168,8 @@ export class EncryptedTopicService {
 
     const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
-    if (TopicManager.hasTopic(topicId)) {
-      topicConfiguration = TopicManager.getTopicConfiguration(topicId);
+    if (EncryptedTopicManager.hasTopic(topicId)) {
+      topicConfiguration = EncryptedTopicManager.getTopicConfiguration(topicId);
     } else {
       topicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
     }
@@ -201,7 +200,7 @@ export class EncryptedTopicService {
     // Decrypt topic configuration message with my private key
     const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
-    TopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
+    await EncryptedTopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
 
     return decryptedTopicConfigurationMessage;
   }
