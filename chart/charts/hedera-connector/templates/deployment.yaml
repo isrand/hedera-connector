@@ -17,11 +17,6 @@ spec:
         component: {{ .Release.Name }}
     spec:
       volumes:
-        {{- if (eq .Values.global.wallet.type "filesystem") }}
-        - name: wallet
-          persistentVolumeClaim:
-            claimName: wallet
-        {{- end }}
         - name: node-credentials
           secret:
             secretName: node-credentials
@@ -32,14 +27,11 @@ spec:
           env:
             - name: NODE_HEDERA_ACCOUNT_ID
               value: {{ .Values.global.hedera.account.id }}
-            - name: WALLET_TYPE
-              value: {{ .Values.global.wallet.type }}
-            {{- if (eq .Values.global.wallet.type "couchdb") }}
             - name: COUCHDB_URL
               {{- if (eq .Values.global.settings.local true) }}
               value: "http://hedera-connector-database:5984"
               {{- else }}
-              value: {{ .Values.global.wallet.couchdb.url }}
+              value: {{ .Values.global.couchdb.url }}
               {{- end }}
             - name: COUCHDB_USER
               valueFrom:
@@ -51,15 +43,10 @@ spec:
                 secretKeyRef:
                   name: database-credentials
                   key: password
-            {{- end }}
             - name: HEDERA_NETWORK
               value: testnet
           ports:
             - containerPort: 4000
           volumeMounts:
-            {{- if (eq .Values.global.wallet.type "filesystem") }}
-            - name: wallet
-              mountPath: /opt/wallet
-            {{- end }}
             - name: node-credentials
               mountPath: /opt/credentials
