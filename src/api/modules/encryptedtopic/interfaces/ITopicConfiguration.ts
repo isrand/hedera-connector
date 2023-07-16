@@ -5,4 +5,5 @@ export interface ITopicConfiguration {
   topicName: string;
   participants: Array<ITopicParticipant>;
   submitKey?: string;
+  topicId?: string;
 }

@@ -42,6 +42,22 @@ export class EncryptedTopicManager {
     }
   }
 
+  public static getAllTopicConfigurations(): Array<ITopicConfiguration> {
+    const allTopicIds: Array<ITopicConfiguration> = [];
+
+    for (const topicId of this.topicPool.keys()) {
+      const topicConfiguration: ITopicConfiguration = this.getTopicConfiguration(topicId);
+      allTopicIds.push({
+        topicId: topicId,
+        topicName: topicConfiguration.topicName,
+        encryptionSize: topicConfiguration.encryptionSize,
+        participants: topicConfiguration.participants
+      });
+    }
+
+    return allTopicIds;
+  }
+
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public static async addTopic(topicId: string, topicConfiguration: Readonly<ITopicConfiguration>): Promise<void> {
     const topicConfigurationObjectInDatabase: nano.IdentifiedDocument & ITopicConfiguration = {
