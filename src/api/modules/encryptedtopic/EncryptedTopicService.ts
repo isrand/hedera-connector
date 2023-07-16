@@ -83,6 +83,10 @@ export class EncryptedTopicService {
     return new HederaTransactionResponse(createTopicResponse).parse();
   }
 
+  public async getAllEncryptedTopicConfigurations(): Promise<Array<ITopicConfiguration>> {
+    return Promise.resolve(EncryptedTopicManager.getAllTopicConfigurations());
+  }
+
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async sendMessageToEncryptedTopic(topicId: string, message: string | Uint8Array, accountId?: string): Promise<unknown> {
     this.logger.log(`Sending message '${message}' to encrypted, private topic ID ${topicId}`);
@@ -158,9 +162,13 @@ export class EncryptedTopicService {
   }
 
   public async getEncryptedTopicParticipants(topicId: string, accountId?: string): Promise<unknown> {
-    const encryptedTopicConfigurationMessage: ITopicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
+    if (EncryptedTopicManager.hasTopic(topicId)) {
+      return EncryptedTopicManager.getTopicConfiguration(topicId).participants;
+    } else {
+      const encryptedTopicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
 
-    return encryptedTopicConfigurationMessage.participants;
+      return encryptedTopicConfiguration.participants;
+    }
   }
 
   public async getMessageFromEncryptedTopic(topicId: string, sequenceNumber: number, accountId?: string): Promise<ITopicMessage | ITopicConfiguration> {

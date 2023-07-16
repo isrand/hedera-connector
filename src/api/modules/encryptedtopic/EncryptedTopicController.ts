@@ -5,6 +5,7 @@ import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHede
 import {SendMessageToEncryptedTopicDTO} from './dtos/SendMessageToEncryptedTopicDTO';
 import {Configuration} from '../../../configuration/Configuration';
 import {EncryptedTopicService} from './EncryptedTopicService';
+import { ITopicConfiguration } from "./interfaces/ITopicConfiguration";
 
 @ApiTags('Encrypted Topic')
 @Controller()
@@ -33,6 +34,14 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async createEncryptedTopic(@Body() createEncryptedTopicDTO: CreateEncryptedTopicDTO, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
     return await this.encryptedTopicService.createEncryptedTopic(createEncryptedTopicDTO, accountId);
+  }
+
+  @ApiOperation({
+    summary: 'Get all encrypted topic configurations stored on the Node.'
+  })
+  @Get('/encryptedtopic')
+  public async getAllEncryptedTopics(): Promise<Array<ITopicConfiguration>> {
+    return await this.encryptedTopicService.getAllEncryptedTopicConfigurations();
   }
 
   @ApiOperation({
