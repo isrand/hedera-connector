@@ -55,7 +55,7 @@ export class EncryptedTopicManager {
     this.logger.debug(`Stored topic ${topicId} on database.`);
 
     this.logger.debug(`Adding topic ${topicId} to cache.`);
-    this.topicPool.set(topicId.replace('0.0.', ''), topicConfiguration);
+    this.topicPool.set(topicId, topicConfiguration);
     this.logger.debug(`Added topic ${topicId} to cache.`);
   }
 
