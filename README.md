@@ -46,19 +46,11 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 ### Credentials
 
-#### Wallet Provider
-
-You can choose to start the Connector with two wallet types: `filesystem` and `couchdb`. To select either, change the `wallet.type` key in the `values.yaml` file in the chart directory.
-
-##### Filesystem
-
-The _filesystem_ wallet type stores all information about the multiple accounts on the node on the path `/opt/wallet` inside of the container. A PersistentVolumeClaim is used to store this data between microservice restarts.
-
 ##### CouchDB
 
-The _couchdb_ wallet type stores account information in a collection called `accounts` in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.
+The CouchDB Wallet stores account information in a collection called `accounts` in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.
 
-If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the `settings.local` toggle to false in `values.yaml`, specify the database URL (without `username:password`) under `wallet.couchdb.url`, and update the `database-credentials.yaml` secret with the correct username and password for the database.
+If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the `settings.local` toggle to false in `values.yaml`, specify the database URL (without `username:password`) under `couchdb.url`, and update the `database-credentials.yaml` secret with the correct username and password for the database.
 
 #### Hedera Account
 

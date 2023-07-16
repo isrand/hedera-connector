@@ -9,9 +9,7 @@ global:
       public_key:
       private_key:
 
-  wallet:
-    type: "filesystem" # "couchdb" or "filesystem"
-    couchdb:
-      url: ""
-      username: ""
-      password: ""
+  couchdb:
+    url: ""
+    username: ""
+    password: ""

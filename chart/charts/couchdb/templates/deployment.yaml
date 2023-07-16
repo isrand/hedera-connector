@@ -1,4 +1,4 @@
-{{- if and (eq .Values.global.wallet.type "couchdb") (eq .Values.global.settings.local true) }}
+{{- if (eq .Values.global.settings.local true) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

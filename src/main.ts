@@ -1,13 +1,12 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './AppModule';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
-import {Configuration} from './configuration/Configuration';
 import {Wallet} from './wallet/Wallet';
 
 export class Main {
   public async bootstrap(): Promise<void> {
-    // Initialize the node wallet depending on the configuration passed via environment variables
-    await Wallet.initialize(Configuration.walletType);
+    // Initialize the node wallet
+    await Wallet.initialize();
     // Initialize application
     const app = await NestFactory.create(AppModule);
 
