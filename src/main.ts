@@ -2,11 +2,16 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './AppModule';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {Wallet} from './wallet/Wallet';
+import {EncryptedTopicManager} from './api/modules/encryptedtopic/support/EncryptedTopicManager';
 
 export class Main {
   public async bootstrap(): Promise<void> {
     // Initialize the node wallet
     await Wallet.initialize();
+
+    // Initialize the topic manager
+    await EncryptedTopicManager.initialize();
+
     // Initialize application
     const app = await NestFactory.create(AppModule);
 
