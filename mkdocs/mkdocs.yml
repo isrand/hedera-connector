@@ -1,0 +1,14 @@
+site_name: Hedera Testnet Connector
+extra_css: 
+    - css/css.css
+nav:
+    - Home: index.md
+theme:
+  name: readthedocs
+  prev_next_buttons_location: top
+  titles_only: true
+  site_name: Hedera Testnet Connector
+  include_homepage_in_sidebar: true
+  logo: img/logo.png
+markdown_extensions:
+  - markdown.extensions.admonition
