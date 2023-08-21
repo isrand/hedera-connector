@@ -15,6 +15,8 @@ import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse'
 import {ApiPreconditionFailedResponse} from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import {CreateAccountErrorResponse} from './errors/CreateAccountErrorResponse';
 import {GetAccountErrorResponse} from './errors/GetAccountErrorResponse';
+import {HederaConnectorAccountBalanceResponse} from './responses/AccountBalanceResponse';
+import {GetAccountBalanceErrorResponse} from './errors/GetAccountBalanceErrorResponse';
 
 @ApiTags('Account')
 @Controller()
@@ -78,5 +80,23 @@ A new account needs to be created with an initial balance that they will then us
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async getAccount(@Param('id') accountId: string): Promise<HederaConnectorGetAccountResponse> {
     return await this.accountService.getAccount(accountId);
+  }
+
+  @Get('/account/:id/balance')
+  @ApiOperation({
+    summary: 'Get the balance of an account given its id.',
+    description: 'This endpoint returns the balance of an account given its id.'
+  })
+  @ApiOkResponse({
+    description: 'Account retrieved response.',
+    type: HederaConnectorAccountBalanceResponse
+  })
+  @ApiNotFoundResponse({
+    description: 'Account retrieval error response.',
+    type: GetAccountBalanceErrorResponse
+  })
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+  public async getAccountBalance(@Param('id') accountId: string): Promise<HederaConnectorAccountBalanceResponse> {
+    return await this.accountService.getAccountBalance(accountId);
   }
 }
