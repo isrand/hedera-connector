@@ -1,4 +1,4 @@
-import {IKyberKeyPair} from '../../crypto/adapters/kyber/interfaces/IKyberKeyPair';
+import {IKyberKeyPair} from '../../crypto/interfaces/IKyberKeyPair';
 import {IAccount} from '../interfaces/IAccount';
 
 export class Account {

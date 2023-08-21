@@ -9,7 +9,8 @@
  * information about "who" participates in the topic, as well as their keys for encryption.
  */
 
-import {IEncryptedObject} from './IEncryptedObject';
+import {IEncryptedObject} from '../../../../common/interfaces/IEncryptedObject';
+import {IEncryptedObjectHashMap} from '../../../../common/interfaces/IEncryptedObjectHashMap';
 
 export interface IEncryptedTopicConfiguration extends IEncryptedObject {
 
@@ -20,14 +21,5 @@ export interface IEncryptedTopicConfiguration extends IEncryptedObject {
    * giving the participants implicit access to the topic.
    */
   // eslint-disable-next-line id-blacklist
-  c: Array<string>;
-
-  /*
-   * The field "s" determines the size of the encryption keys
-   * used to encrypt the topic configuration message.
-   * This field needs to be accessible outside of the encrypted
-   * configuration message to be able to decrypt said message.
-   */
-  // eslint-disable-next-line id-blacklist
-  s: number;
+  c: IEncryptedObjectHashMap;
 }

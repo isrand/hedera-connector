@@ -1,5 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {TopicParticipantDTO} from './TopicParticipantDTO';
+import {AccessListParticipantDTO} from '../../../../common/dto/AccessListParticipantDTO';
 
 export class CreateEncryptedTopicDTO {
   @ApiProperty({
@@ -27,5 +27,5 @@ export class CreateEncryptedTopicDTO {
       }
     ]
   })
-  public participants!: Array<TopicParticipantDTO>;
+  public participants!: Array<AccessListParticipantDTO>;
 }

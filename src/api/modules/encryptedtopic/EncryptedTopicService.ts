@@ -9,12 +9,12 @@ import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHede
 import {HederaTransactionResponse} from '../../../hedera/responses/HederaTransactionResponse';
 import {IGetMessageFromTopicResponse} from '../topic/responses/IGetMessageFromTopicResponse';
 import {EncryptedTopicManager} from './support/EncryptedTopicManager';
-import {ITopicParticipant} from './interfaces/ITopicParticipant';
 import {IEncryptedTopicMessage} from './interfaces/IEncryptedTopicMessage';
 import {Wallet} from '../../../wallet/Wallet';
-import {Crypto} from '../../../crypto/Crypto';
 import {ITopicMessage} from '../topic/interfaces/ITopicMessage';
 import {Configuration} from '../../../configuration/Configuration';
+import {IAccessListParticipant} from '../../../common/interfaces/IAccessListParticipant';
+import {Kyber} from '../../../crypto/Kyber';
 
 @Injectable()
 export class EncryptedTopicService {
@@ -35,7 +35,7 @@ export class EncryptedTopicService {
       encryptionSize: createEncryptedTopicDTO.encryptionSize,
       topicName: createEncryptedTopicDTO.topicName,
       participants: [
-        ...createEncryptedTopicDTO.participants as Array<ITopicParticipant>,
+        ...createEncryptedTopicDTO.participants as Array<IAccessListParticipant>,
         {
           hederaPublicKey: account.getHederaPublicKey(),
           kyberPublicKey: account.getKyberKeyPair(createEncryptedTopicDTO.encryptionSize).publicKey
@@ -45,15 +45,15 @@ export class EncryptedTopicService {
     };
 
     // Remove doubles from the participants array...
-    topicConfigurationMessage.participants = topicConfigurationMessage.participants.filter((value: Readonly<ITopicParticipant>, index, self: ReadonlyArray<Readonly<ITopicParticipant>>) => index === self.findIndex((topicParticipant: Readonly<ITopicParticipant>) => topicParticipant.hederaPublicKey === value.hederaPublicKey && topicParticipant.kyberPublicKey === value.kyberPublicKey));
+    topicConfigurationMessage.participants = topicConfigurationMessage.participants.filter((value: Readonly<IAccessListParticipant>, index, self: ReadonlyArray<Readonly<IAccessListParticipant>>) => index === self.findIndex((topicParticipant: Readonly<IAccessListParticipant>) => topicParticipant.hederaPublicKey === value.hederaPublicKey && topicParticipant.kyberPublicKey === value.kyberPublicKey));
 
     // Remove empty or incorrect entries from the participants array...
-    topicConfigurationMessage.participants = topicConfigurationMessage.participants.filter((value: Readonly<ITopicParticipant>) => !(!value.kyberPublicKey || value.kyberPublicKey === '') && !(!value.hederaPublicKey || value.hederaPublicKey === ''));
+    topicConfigurationMessage.participants = topicConfigurationMessage.participants.filter((value: Readonly<IAccessListParticipant>) => !(!value.kyberPublicKey || value.kyberPublicKey === '') && !(!value.hederaPublicKey || value.hederaPublicKey === ''));
 
     this.logger.log(`Creating new encrypted topic with configuration: ${JSON.stringify(topicConfigurationMessage)}`);
 
     // Construct final encrypted configuration message
-    const encryptedConfigurationMessage: IEncryptedTopicConfiguration = new Crypto(createEncryptedTopicDTO.encryptionSize).adapter.encryptTopicConfiguration(topicConfigurationMessage.participants, JSON.stringify(topicConfigurationMessage), submitKey);
+    const encryptedConfigurationMessage: IEncryptedTopicConfiguration = new Kyber(createEncryptedTopicDTO.encryptionSize).encryptTopicConfiguration(topicConfigurationMessage.participants, JSON.stringify(topicConfigurationMessage), submitKey);
 
     // Create the topic
     const createTopicResponse: IHederaTransactionResponse = await new HederaStub(
@@ -65,7 +65,6 @@ export class EncryptedTopicService {
     );
 
     // Send message in encrypted topic
-
     if (createTopicResponse.receipt.topicId) {
       await new HederaStub(
         account
@@ -110,7 +109,7 @@ export class EncryptedTopicService {
       const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
 
       // Decrypt topic configuration message with my private key
-      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
+      const decryptedTopicConfigurationMessage: ITopicConfiguration = new Kyber(encryptedTopicConfigurationMessage.s).decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
       // Cache in the TopicManager
       await EncryptedTopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
@@ -125,7 +124,7 @@ export class EncryptedTopicService {
     };
 
     // Add Node account to message recipients
-    let messageRecipients: Array<ITopicParticipant> = [
+    let messageRecipients: Array<IAccessListParticipant> = [
       {
         hederaPublicKey: account.getHederaPublicKey(),
         kyberPublicKey: account.getKyberKeyPair(topicConfiguration.encryptionSize).publicKey
@@ -134,12 +133,12 @@ export class EncryptedTopicService {
     ];
 
     // Remove duplicate recipients from messageRecipients object
-    messageRecipients = messageRecipients.filter((value: Readonly<ITopicParticipant>, index, self: ReadonlyArray<Readonly<ITopicParticipant>>) => index === self.findIndex((topicParticipant) => topicParticipant.hederaPublicKey === value.hederaPublicKey && topicParticipant.kyberPublicKey === value.kyberPublicKey));
+    messageRecipients = messageRecipients.filter((value: Readonly<IAccessListParticipant>, index, self: ReadonlyArray<Readonly<IAccessListParticipant>>) => index === self.findIndex((topicParticipant) => topicParticipant.hederaPublicKey === value.hederaPublicKey && topicParticipant.kyberPublicKey === value.kyberPublicKey));
 
     this.logger.debug(`Encrypting message with keys for recipients ${JSON.stringify(messageRecipients)}`);
 
     // Encrypt message object
-    const encryptedMessage: IEncryptedTopicMessage = new Crypto(topicConfiguration.encryptionSize).adapter.encryptMessage(messageRecipients, JSON.stringify(messageObject));
+    const encryptedMessage: IEncryptedTopicMessage = new Kyber(topicConfiguration.encryptionSize).encryptData(messageRecipients, JSON.stringify(messageObject));
 
     const base64EncodedEncryptedMessage: string = Buffer.from(JSON.stringify(encryptedMessage)).toString('base64');
 
@@ -164,11 +163,11 @@ export class EncryptedTopicService {
   public async getEncryptedTopicParticipants(topicId: string, accountId?: string): Promise<unknown> {
     if (EncryptedTopicManager.hasTopic(topicId)) {
       return EncryptedTopicManager.getTopicConfiguration(topicId).participants;
-    } else {
-      const encryptedTopicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
-
-      return encryptedTopicConfiguration.participants;
     }
+
+    const encryptedTopicConfiguration = await this.getEncryptedTopicConfiguration(topicId, accountId);
+
+    return encryptedTopicConfiguration.participants;
   }
 
   public async getMessageFromEncryptedTopic(topicId: string, sequenceNumber: number, accountId?: string): Promise<ITopicMessage | ITopicConfiguration> {
@@ -206,7 +205,7 @@ export class EncryptedTopicService {
 
     const encryptedTopicConfigurationMessage: IEncryptedTopicConfiguration = JSON.parse(Buffer.from(plaintextEncryptedTopicConfigurationMessage, 'base64').toString('utf8')) as IEncryptedTopicConfiguration;
     // Decrypt topic configuration message with my private key
-    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Crypto(encryptedTopicConfigurationMessage.s).adapter.decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
+    const decryptedTopicConfigurationMessage: ITopicConfiguration = new Kyber(encryptedTopicConfigurationMessage.s).decryptTopicConfigurationMessage(encryptedTopicConfigurationMessage, account.getKyberKeyPair(encryptedTopicConfigurationMessage.s).privateKey);
 
     await EncryptedTopicManager.addTopic(topicId, decryptedTopicConfigurationMessage);
 
@@ -217,6 +216,6 @@ export class EncryptedTopicService {
   public handleEncryptedTopicMessage(encryptionSize: number, contents: Uint8Array | string, consensusTimeStamp: Timestamp, sequenceNumber: number, privateKey: string): ITopicMessage | ITopicConfiguration {
     const encryptedMessage = Buffer.from(Buffer.from(contents).toString(), 'base64').toString();
 
-    return new Crypto(encryptionSize).adapter.decryptTopicMessage(JSON.parse(encryptedMessage) as IEncryptedTopicMessage, consensusTimeStamp, sequenceNumber, privateKey);
+    return new Kyber(encryptionSize).decryptTopicMessage(JSON.parse(encryptedMessage) as IEncryptedTopicMessage, consensusTimeStamp, sequenceNumber, privateKey);
   }
 }

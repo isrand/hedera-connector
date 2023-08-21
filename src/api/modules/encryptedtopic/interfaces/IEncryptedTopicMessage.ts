@@ -1,3 +1,3 @@
-import {IEncryptedObject} from './IEncryptedObject';
+import {IEncryptedObject} from '../../../../common/interfaces/IEncryptedObject';
 
 export type IEncryptedTopicMessage = IEncryptedObject;
