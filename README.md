@@ -1,3 +1,5 @@
+[](./img/logo.png)
+
 # Hedera Hashgraph Testnet Connector
 
 This repository contains a NestJS API server to simplify integration with the Hedera Hashgraph Testnet. Its main features are Node multitenancy and an implementation of post-quantum cryptography on top of the public Blockchain layer.
