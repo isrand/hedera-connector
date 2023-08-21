@@ -15,7 +15,7 @@ import {
   FileUpdateTransaction,
   TopicDeleteTransaction,
   TopicInfo,
-  FileDeleteTransaction, Client, AccountCreateTransaction
+  FileDeleteTransaction, Client, AccountCreateTransaction, AccountBalanceQuery, AccountBalance
 } from '@hashgraph/sdk';
 import {IHederaTransactionResponse} from '../responses/interfaces/IHederaTransactionResponse';
 import {IHederaStub} from './interfaces/IHederaStub';
@@ -66,6 +66,14 @@ export class HederaStub implements IHederaStub {
       hederaPublicKey: accountPublicKey.toStringDer(),
       hederaPrivateKey: accountPrivateKey.toStringDer()
     };
+  }
+
+  public async getAccountBalance(accountId: string): Promise<Hbar> {
+    const accountBalance: AccountBalance = await new AccountBalanceQuery({
+      accountId: accountId
+    }).executeWithSigner(this.hederaWallet);
+
+    return accountBalance.hbars;
   }
 
   /*

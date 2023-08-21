@@ -13,6 +13,8 @@ import {AccountResponse} from './responses/AccountResponse';
 import {KeySize} from '../../../crypto/enums/KeySize';
 import {KyberKeyPair} from '../../../crypto/support/KyberKeyPair';
 import {Kyber} from '../../../crypto/Kyber';
+import {Hbar, HbarUnit} from '@hashgraph/sdk';
+import {HederaConnectorAccountBalanceResponse} from './responses/AccountBalanceResponse';
 
 @Injectable()
 export class AccountService {
@@ -119,6 +121,22 @@ export class AccountService {
         kyber512PublicKey: account.getKyberKeyPair(512).publicKey,
         kyber768PublicKey: account.getKyberKeyPair(768).publicKey,
         kyber1024PublicKey: account.getKyberKeyPair(1024).publicKey
+      }
+    };
+  }
+
+  public async getAccountBalance(accountId: string): Promise<HederaConnectorAccountBalanceResponse> {
+    const account = await Wallet.getAccount(Configuration.nodeHederaAccountId);
+
+    const accountBalance: Hbar = await new HederaStub(
+      account
+    ).getAccountBalance(accountId);
+
+    return {
+      statusCode: HttpStatusCode.Ok,
+      message: 'Account balance retrieved.',
+      payload: {
+        hbar: `${accountBalance.to(HbarUnit.Hbar).toString()} ℏ`
       }
     };
   }
