@@ -79,10 +79,10 @@ export class EncryptedFileService {
 
     const newEncryptedFileObject = new Kyber(encryptedFileObject.s).encryptData(accessList.participants, decryptedFileContents);
 
-    // eslint-disable
+    /* eslint-disable */
     // ESLint complains a lot with lodash, it seems...
     const fileCombinations: IEncryptedObject = lodash.merge<IEncryptedObject, IEncryptedObject>(encryptedFileObject, newEncryptedFileObject) as IEncryptedObject;
-    // eslint-enable
+    /* eslint-enable */
 
     const fileCombinationsBase64 = Buffer.from(JSON.stringify(fileCombinations)).toString('base64');
 
