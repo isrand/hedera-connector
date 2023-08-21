@@ -8,8 +8,8 @@ import * as crypto from "crypto";
 import {Timestamp} from "@hashgraph/sdk";
 import {KyberKeyPair} from "./support/KyberKeyPair";
 import {KeySize} from "./enums/KeySize";
-import {IAccessListParticipant} from "../api/common/interfaces/IAccessListParticipant";
-import {IEncryptedObject} from "../api/common/interfaces/IEncryptedObject";
+import {IAccessListParticipant} from "../common/interfaces/IAccessListParticipant";
+import {IEncryptedObject} from "../common/interfaces/IEncryptedObject";
 
 const kyber = require('crystals-kyber');
 
