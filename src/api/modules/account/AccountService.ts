@@ -1,6 +1,5 @@
 import {Injectable, Logger, NotFoundException, PreconditionFailedException} from '@nestjs/common';
 import {HederaStub} from '../../../hedera/stub/HederaStub';
-import {Crypto} from '../../../crypto/Crypto';
 import {IHederaCreateAccountResponse} from '../../../hedera/responses/interfaces/IHederaCreateAccountResponse';
 import {CreateAccountRequest} from './requests/CreateAccountRequest';
 import {Wallet} from '../../../wallet/Wallet';
@@ -11,8 +10,9 @@ import {HederaConnectorGetAllAccountsResponse} from './responses/GetAllAccountsR
 import {HederaConnectorGetAccountResponse} from './responses/GetAccountResponse';
 import {HttpStatusCode} from 'axios';
 import {AccountResponse} from './responses/AccountResponse';
-import {KyberKeySize} from '../../../crypto/adapters/kyber/enums/KyberKeySize';
-import {KyberKeyPair} from '../../../crypto/adapters/kyber/support/KyberKeyPair';
+import {KeySize} from '../../../crypto/enums/KeySize';
+import {KyberKeyPair} from '../../../crypto/support/KyberKeyPair';
+import {Kyber} from '../../../crypto/Kyber';
 
 @Injectable()
 export class AccountService {
@@ -24,9 +24,9 @@ export class AccountService {
 
     this.logger.debug('Creating new Hedera account and associated Kyber keys...');
 
-    const kyber512KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber512).adapter.generateKeyPair();
-    const kyber768KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber768).adapter.generateKeyPair();
-    const kyber1024KeyPair: KyberKeyPair = new Crypto(KyberKeySize.Kyber1024).adapter.generateKeyPair();
+    const kyber512KeyPair: KyberKeyPair = new Kyber(KeySize.Kyber512).generateKeyPair();
+    const kyber768KeyPair: KyberKeyPair = new Kyber(KeySize.Kyber768).generateKeyPair();
+    const kyber1024KeyPair: KyberKeyPair = new Kyber(KeySize.Kyber1024).generateKeyPair();
 
     let createAccountResponse: IHederaCreateAccountResponse;
 
@@ -46,17 +46,17 @@ export class AccountService {
       createAccountResponse.hederaPrivateKey,
       [
         {
-          size: KyberKeySize.Kyber512,
+          size: KeySize.Kyber512,
           publicKey: kyber512KeyPair.publicKey,
           privateKey: kyber512KeyPair.privateKey
         },
         {
-          size: KyberKeySize.Kyber768,
+          size: KeySize.Kyber768,
           publicKey: kyber768KeyPair.publicKey,
           privateKey: kyber768KeyPair.privateKey
         },
         {
-          size: KyberKeySize.Kyber1024,
+          size: KeySize.Kyber1024,
           publicKey: kyber1024KeyPair.publicKey,
           privateKey: kyber1024KeyPair.privateKey
         }

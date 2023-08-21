@@ -1,4 +1,4 @@
-import {IKyberKeyPair} from '../../crypto/adapters/kyber/interfaces/IKyberKeyPair';
+import {IKyberKeyPair} from '../../crypto/interfaces/IKyberKeyPair';
 
 export interface IAccount {
   hederaAccountId: string;

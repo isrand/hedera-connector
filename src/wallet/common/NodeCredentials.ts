@@ -1,9 +1,9 @@
 import {Logger} from '@nestjs/common';
 import * as fs from 'fs';
-import {IKyberKeyPair} from '../../crypto/adapters/kyber/interfaces/IKyberKeyPair';
-import {Crypto} from '../../crypto/Crypto';
+import {IKyberKeyPair} from '../../crypto/interfaces/IKyberKeyPair';
 import {Account} from '../support/Account';
-import {KyberKeySize} from '../../crypto/adapters/kyber/enums/KyberKeySize';
+import {KeySize} from '../../crypto/enums/KeySize';
+import {Kyber} from '../../crypto/Kyber';
 
 export class NodeCredentials {
   private readonly logger: Logger = new Logger(NodeCredentials.name);
@@ -34,14 +34,14 @@ export class NodeCredentials {
   private loadNodeKyberKeys(): Array<IKyberKeyPair> {
     const keys: Array<IKyberKeyPair> = [];
 
-    for (const size of [KyberKeySize.Kyber512, KyberKeySize.Kyber768, KyberKeySize.Kyber1024]) {
+    for (const size of [KeySize.Kyber512, KeySize.Kyber768, KeySize.Kyber1024]) {
       this.logger.debug(`Loading Kyber private / public key pair of size ${size}`);
       const publicKey = fs.readFileSync(`${this.pathToCredentialsDirectory}/kyber_${size}_public_key`).toString();
       const privateKey = fs.readFileSync(`${this.pathToCredentialsDirectory}/kyber_${size}_private_key`).toString();
 
       if (publicKey === 'empty' || privateKey === 'empty') {
         this.logger.debug(`Kyber private / public key pair of size ${size} not found. Generating now..`);
-        const keyPair = new Crypto(size).adapter.generateKeyPair();
+        const keyPair = new Kyber(size).generateKeyPair();
 
         keys.push({
           size: size,
