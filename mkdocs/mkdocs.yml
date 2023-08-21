@@ -3,6 +3,9 @@ extra_css:
     - css/css.css
 nav:
     - Home: index.md
+    - Getting Started:
+        - Setup: getting-started/setup.md
+        - Installation: getting-started/installation.md
 theme:
   name: readthedocs
   prev_next_buttons_location: top

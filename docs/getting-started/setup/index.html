@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Setup - Hedera Testnet Connector</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../css/css.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Setup";
+        var mkdocs_page_input_path = "getting-started/setup.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Hedera Testnet Connector</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+          <li>Getting Started &raquo;</li>
+      <li class="breadcrumb-item active">Setup</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+    <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Breadcrumb Navigation">
+        <a href="../.." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left" aria-hidden="true"></span> Previous</a>
+        <a href="../installation/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right" aria-hidden="true"></span></a>
+    </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="setup">Setup</h1>
+<h3 id="dependencies">Dependencies</h3>
+<p>To simplify dependency management it is recommended that you install <a href="http://brew.sh">Homebrew</a>.</p>
+<p>To deploy the Connector locally you wil need:</p>
+<ul>
+<li><a href="https://docker.com">Docker</a> (<code>brew install cask docker</code>) (Tested: v4.19.0)</li>
+<li><a href="https://minikube.sigs.k8s.io/">Minikube</a> (<code>brew install minikube</code>) (Tested: v1.30.1)</li>
+<li><a href="https://helm.sh">Helm</a> (<code>brew install helm</code>)</li>
+<li><a href="https://nodejs.org">NodeJS</a> (<code>brew install node</code>)</li>
+</ul>
+<p>You will also need to install the NPM packages used in this project:</p>
+<pre><code class="language-bash">npm install
+</code></pre>
+<h3 id="kubernetes-environment">Kubernetes environment</h3>
+<p>Minikube is used as a minimal Kubernetes environment. The registry addon is used to store the Connector's image. To create the cluster run:</p>
+<pre><code class="language-bash">minikube start --insecure-registry localhost:5000
+minikube addons enable registry
+MINIKUBE_IP=$(minikube ip)
+docker run --detach --rm --network=host alpine ash -c &quot;apk add socat &amp;&amp; socat TCP-LISTEN:5000,reuseaddr,fork TCP:$MINIKUBE_IP:5000&quot;
+</code></pre>
+<h3 id="credentials">Credentials</h3>
+<h5 id="couchdb">CouchDB</h5>
+<p>The CouchDB Wallet stores account information in a collection called <code>accounts</code> in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.</p>
+<p>If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the <code>settings.local</code> toggle to false in <code>values.yaml</code>, specify the database URL (without <code>username:password</code>) under <code>couchdb.url</code>, and update the <code>database-credentials.yaml</code> secret with the correct username and password for the database.</p>
+<h4 id="hedera-account">Hedera Account</h4>
+<blockquote>
+<p>If you don't have a Hedera Hashgraph Testnet account you can create one <a href="https://portal.hedera.com/register">here</a>.</p>
+</blockquote>
+<p>The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network.</p>
+<p>You can find your Hedera Account information <a href="https://portal.hedera.com">in the Hedera Portal</a> - use the DER-encoded keys.</p>
+<p>Add your Hedera Account Id, Hedera Public Key and Hedera Private Key in the <code>values.yaml</code> file in the <code>chart</code> directory.</p>
+<h4 id="public-private-keys">Public / Private Keys</h4>
+<p>The Hedera Connector uses a set of <a href="https://pq-crystals.org/kyber/">Crystals-Kyber</a> public / private keys for end-to-end encryption. It makes use of the three key bit sizes: 512, 768, and 1024. Different key sizes are used for flexibility when encrypting data, to reduce the size of the encrypted data and speed up the encryption mechanism.</p>
+<p>You can choose to bootstrap the microservice with these keys in two ways:</p>
+<h5 id="1-start-the-microservice">1. Start the microservice</h5>
+<p>If you want a quick start you can just run the microservice. It will create the keys on bootstrap and place them in its filesystem.</p>
+<h5 id="2-import-your-own-keys">2. Import your own key(s)</h5>
+<p>If you already have a set of public / private Crystals-Kyber keys you want to use you can choose to start the microservice with these.
+You need to encode in base64 the contents of your keys and place them under the <code>/chart/artifacts</code> folder. The names of the files must be</p>
+<p><code>kyber_&lt;keysize&gt;.priv</code> and <code>kyber_&lt;keysize&gt;.pub</code></p>
+<p>like the following:</p>
+<pre><code>/chart/artifacts/kyber_512.priv | /chart/artifacts/kyber_512.pub
+/chart/artifacts/kyber_768.priv | /chart/artifacts/kyber_768.pub
+/chart/artifacts/kyber_1024.priv | /chart/artifacts/kyber_1024.pub
+</code></pre>
+<p>The remaining key sizes that can't be found will be automatically generated when the microservice starts.</p>
+<p>On the other hand, if you don't have your own set of keys you can run <code>npm run generateKyberKeys</code> to create the six files listed above.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../.." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

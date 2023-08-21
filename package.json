@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "buildDocs": "cd mkdocs && mkdocs build -d ../docs",
     "buildDockerImage": "nest build && docker build -t localhost:5000/hedera-connector:1.0.0 .",
     "generateKyberKeys": "node utils/kyber/generate-keys.js",
     "push": "docker push localhost:5000/hedera-connector:1.0.0",
