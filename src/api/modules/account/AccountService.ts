@@ -128,16 +128,22 @@ export class AccountService {
   public async getAccountBalance(accountId: string): Promise<HederaConnectorAccountBalanceResponse> {
     const account = await Wallet.getAccount(Configuration.nodeHederaAccountId);
 
-    const accountBalance: Hbar = await new HederaStub(
-      account
-    ).getAccountBalance(accountId);
+    try {
+      const accountBalance: Hbar = await new HederaStub(
+        account
+      ).getAccountBalance(accountId);
 
-    return {
-      statusCode: HttpStatusCode.Ok,
-      message: 'Account balance retrieved.',
-      payload: {
-        hbar: `${accountBalance.to(HbarUnit.Hbar).toString()} ℏ`
-      }
-    };
+      return {
+        statusCode: HttpStatusCode.Ok,
+        message: 'Account balance retrieved.',
+        payload: {
+          hbar: `${accountBalance.to(HbarUnit.Hbar).toString()} ℏ`
+        }
+      };
+    } catch (error: unknown) {
+      this.logger.error(error);
+
+      throw new NotFoundException('Account not found.');
+    }
   }
 }

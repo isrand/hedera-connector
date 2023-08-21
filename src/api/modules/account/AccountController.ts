@@ -1,4 +1,4 @@
-import {Get, Body, Controller, Post, Param, NotFoundException} from '@nestjs/common';
+import {Get, Body, Controller, Post, Param} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -16,6 +16,7 @@ import {ApiPreconditionFailedResponse} from '@nestjs/swagger/dist/decorators/api
 import {CreateAccountErrorResponse} from './errors/CreateAccountErrorResponse';
 import {GetAccountErrorResponse} from './errors/GetAccountErrorResponse';
 import {HederaConnectorAccountBalanceResponse} from './responses/AccountBalanceResponse';
+import {GetAccountBalanceErrorResponse} from './errors/GetAccountBalanceErrorResponse';
 
 @ApiTags('Account')
 @Controller()
@@ -88,11 +89,11 @@ A new account needs to be created with an initial balance that they will then us
   })
   @ApiOkResponse({
     description: 'Account retrieved response.',
-    type: HederaConnectorGetAccountResponse
+    type: HederaConnectorAccountBalanceResponse
   })
   @ApiNotFoundResponse({
     description: 'Account retrieval error response.',
-    type: NotFoundException
+    type: GetAccountBalanceErrorResponse
   })
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public async getAccountBalance(@Param('id') accountId: string): Promise<HederaConnectorAccountBalanceResponse> {

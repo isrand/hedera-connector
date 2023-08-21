@@ -16,7 +16,7 @@ export class HederaConnectorAccountBalanceResponse implements IHederaConnectorRe
   public statusCode!: number;
 
   @ApiProperty({
-    example: 'Account created.'
+    example: 'Account balance retrieved.'
   })
   public message!: string;
 
