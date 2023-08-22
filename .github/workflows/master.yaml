@@ -30,6 +30,8 @@ jobs:
     needs: lint-and-build
     steps:
       - uses: actions/checkout@v2
+      - uses: bahmutov/npm-install@v1
+
       - name: Create and push documentation
         run: |
           pip3 install mkdocs
