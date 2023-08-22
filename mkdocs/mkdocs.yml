@@ -1,0 +1,25 @@
+site_name: Hedera Connector
+site_description: "Documentation for the Hedera Connector microservice"
+repo_url: https://github.com/isrand/hedera-connector
+extra_css:
+    - css/css.css
+nav:
+    - Home: index.md
+    - 🚀 Getting Started:
+        - Setup: getting-started/setup.md
+        - Installation: getting-started/installation.md
+    - 📖 Reference:
+        - API: reference/api.md
+
+theme:
+  name: readthedocs
+  prev_next_buttons_location: hidden
+  titles_only: true
+  site_name: Hedera Connector
+  include_homepage_in_sidebar: true
+  logo: img/logo.png
+markdown_extensions:
+  - markdown.extensions.admonition
+plugins:
+  - open-in-new-tab
+  - swagger-ui-tag
