@@ -8,4 +8,4 @@ npm run push
 npm run start
 ```
 
-Once the container is up and running you can port forward it through Kubernetes and access the Swagger documentation [http://localhost:4000/swagger](here).
+Once the container is up and running you can port forward it through Kubernetes and access the Swagger documentation [here](http://localhost:4000/swagger).
