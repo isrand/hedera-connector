@@ -31,7 +31,11 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 ### Credentials
 
+<<<<<<< Updated upstream
 ##### CouchDB
+=======
+### CouchDB
+>>>>>>> Stashed changes
 
 The CouchDB Wallet stores account information in a collection called `accounts` in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.
 
