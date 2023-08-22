@@ -160,6 +160,19 @@ export class EncryptedTopicService {
     return new HederaTransactionResponse(sendMessageToTopicResponse).parse();
   }
 
+  public async deleteEncryptedTopic(topicId: string, accountId?: string): Promise<IHederaNetworkResponse> {
+    this.logger.log(`Deleting encrypted topic ${topicId}`);
+
+    const account = accountId ? await Wallet.getAccount(accountId) : await Wallet.getAccount(Configuration.nodeHederaAccountId);
+    const deleteTopicResponse: IHederaTransactionResponse = await new HederaStub(
+      account
+    ).deleteTopic(topicId);
+
+    this.logger.log(`Deleted encrypted topic ${topicId}`);
+
+    return new HederaTransactionResponse(deleteTopicResponse).parse();
+  }
+
   public async getEncryptedTopicParticipants(topicId: string, accountId?: string): Promise<unknown> {
     if (EncryptedTopicManager.hasTopic(topicId)) {
       return EncryptedTopicManager.getTopicConfiguration(topicId).participants;
