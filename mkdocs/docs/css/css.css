@@ -17,7 +17,7 @@ h2 {
 }
 
 .wy-nav-top i {
-  color: #45a355;
+  color: #1e1e1e;
   padding: 25px;
 }
 
@@ -43,7 +43,6 @@ p > a:after {
 
 .wy-side-nav-search {
   display: block;
-  width: 100%;
   background: rgb(0,0,0);
   background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 15%, rgba(37,0,75,1) 100%, rgba(128,0,255,1) 100%, rgba(65,21,101,1) 100%);
   text-align: center;
