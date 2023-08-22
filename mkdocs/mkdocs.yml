@@ -9,7 +9,7 @@ nav:
         - Setup: getting-started/setup.md
         - Installation: getting-started/installation.md
     - 📖 Reference:
-        - Swagger: reference/swagger.md
+        - API: reference/api.md
 
 theme:
   name: readthedocs
