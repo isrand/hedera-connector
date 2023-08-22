@@ -66,13 +66,12 @@ footer {
   font-style: italic;
 }
 
-
 .wy-nav-content-wrap {
   background: #fcfcfc;
 }
 
 .wy-nav-content{
-  max-width: 1000px;
+  max-width: 1500px;
 }
 
 .wy-breadcrumbs {
@@ -157,4 +156,19 @@ footer {
 .rst-content .info > .admonition-title {
   font-weight: 100;
   text-align: left;
+}
+
+.swagger-ui-iframe {
+  display: block;  /* iframes are inline by default */
+  height: 100vh;  /* Set height to 100% of the viewport height */
+  width: 100vw;  /* Set width to 100% of the viewport width */
+  border: none; /* Remove default border */
+}
+
+#f12cc8c2 {
+  overflow: scroll;
+}
+
+.swagger-ui-iframe > html > body {
+  overflow: scroll;
 }

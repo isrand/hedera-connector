@@ -8,6 +8,7 @@ nav:
     - Getting Started:
         - Setup: getting-started/setup.md
         - Installation: getting-started/installation.md
+        - Swagger: getting-started/swagger.md
 theme:
   name: readthedocs
   prev_next_buttons_location: hidden
@@ -19,3 +20,4 @@ markdown_extensions:
   - markdown.extensions.admonition
 plugins:
   - open-in-new-tab
+  - swagger-ui-tag

@@ -6,15 +6,15 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../../img/favicon.ico" rel="shortcut icon"/>
-<title>Installation - Hedera Connector</title>
+<title>Swagger - Hedera Connector</title>
 <link href="../../css/theme.css" rel="stylesheet"/>
 <link href="../../css/theme_extra.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
 <link href="../../css/css.css" rel="stylesheet"/>
 <script>
         // Current page data
-        var mkdocs_page_name = "Installation";
-        var mkdocs_page_input_path = "getting-started/installation.md";
+        var mkdocs_page_name = "Swagger";
+        var mkdocs_page_input_path = "getting-started/swagger.md";
         var mkdocs_page_url = null;
       </script>
 <!--[if lt IE 9]>
@@ -41,9 +41,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
 </li>
-<li class="toctree-l1 current"><a class="reference internal current" href="./">Installation</a>
+<li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../swagger/">Swagger</a>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Swagger</a>
 </li>
 </ul>
 </div>
@@ -59,22 +59,35 @@
 <ul class="wy-breadcrumbs">
 <li><a aria-label="Docs" class="icon icon-home" href="../.."></a> »</li>
 <li>Getting Started »</li>
-<li class="breadcrumb-item active">Installation</li>
+<li class="breadcrumb-item active">Swagger</li>
 <li class="wy-breadcrumbs-aside">
-<a class="icon icon-github" href="https://github.com/isrand/hedera-connector/edit/master/docs/getting-started/installation.md"> Edit on GitHub</a>
+<a class="icon icon-github" href="https://github.com/isrand/hedera-connector/edit/master/docs/getting-started/swagger.md"> Edit on GitHub</a>
 </li>
 </ul>
 <hr/>
 </div>
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
-<h1 id="installation">Installation</h1>
-<p>To deploy the Hedera Connector locally run:</p>
-<pre><code class="language-bash">npm run buildDockerImage
-npm run push
-npm run start
-</code></pre>
-<p>Once the container is up and running you can port forward it through Kubernetes and access the Swagger documentation on http://localhost:4000/swagger. Here you will see a list of endpoints and operations you can perform.</p>
+<style>
+    html {
+        overflow: hidden;
+    }
+</style>
+<p><iframe class="swagger-ui-iframe" frameborder="0" id="b832c442" src="swagger-b832c442.html" style="overflow:hidden;width:100%;" width="100%"></iframe></p>
+<script>
+    window.onload = function() {
+        let iframeId = document.querySelector("iframe").id;
+        let iframe = document.getElementById(iframeId);
+        const doc = iframe.contentWindow.document;
+        let style = 
+          'body {' +
+          '  overflow: scroll;' +
+          '}';
+        doc.open();
+        doc.write(style);
+        doc.close();
+    }
+</script>
 </div>
 </div><footer>
 <hr/>
@@ -93,8 +106,7 @@ npm run start
 <span>
 <a class="fa fa-github" href="https://github.com/isrand/hedera-connector" style="color: #fcfcfc"> GitHub</a>
 </span>
-<span><a href="../setup/" style="color: #fcfcfc">« Previous</a></span>
-<span><a href="../swagger/" style="color: #fcfcfc">Next »</a></span>
+<span><a href="../installation/" style="color: #fcfcfc">« Previous</a></span>
 </span>
 </div>
 <script src="../../js/jquery-3.6.0.min.js"></script>
@@ -123,7 +135,7 @@ npm run start
                 iframe_id_list.push(iframes[i].getAttribute("id"))
             }
         
-            let ticking = true;
+            let ticking = false;
             
             document.addEventListener('scroll', function(e) {
                 if (!ticking) {
