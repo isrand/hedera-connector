@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "buildDocs": "cd mkdocs && mkdocs build -d ../docs",
+    "generateOpenAPISpec": "npm run build && node dist/utils/OpenAPISpecProvider.js './mkdocs/docs/assets/openapi.json'",
     "buildDockerImage": "nest build && docker build -t localhost:5000/hedera-connector:1.0.0 .",
     "generateKyberKeys": "node utils/kyber/generate-keys.js",
     "push": "docker push localhost:5000/hedera-connector:1.0.0",
@@ -43,6 +44,7 @@
     "@nestjs/testing": "10.0.5",
     "@types/express": "4.17.13",
     "@types/jest": "29.2.4",
+    "@types/lodash": "4.14.197",
     "@types/node": "18.11.18",
     "@types/supertest": "2.0.11",
     "@typescript-eslint/eslint-plugin": "6.0.0",
