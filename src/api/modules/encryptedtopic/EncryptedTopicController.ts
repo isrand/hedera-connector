@@ -5,7 +5,7 @@ import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHede
 import {Configuration} from '../../../configuration/Configuration';
 import {EncryptedTopicService} from './EncryptedTopicService';
 import {ITopicConfiguration} from './interfaces/ITopicConfiguration';
-import { SendMessageToTopicDTO } from "../topic/dtos/SendMessageToTopicDTO";
+import {SendMessageToTopicDTO} from '../topic/dtos/SendMessageToTopicDTO';
 
 @ApiTags('Encrypted Topic')
 @Controller()
