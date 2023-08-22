@@ -10,7 +10,7 @@ nav:
         - Installation: getting-started/installation.md
 theme:
   name: readthedocs
-  prev_next_buttons_location: top
+  prev_next_buttons_location: hidden
   titles_only: true
   site_name: Hedera Connector
   include_homepage_in_sidebar: true
