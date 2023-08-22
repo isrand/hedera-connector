@@ -1,5 +1,5 @@
 import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Query} from '@nestjs/common';
 import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
 import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {SendMessageToEncryptedTopicDTO} from './dtos/SendMessageToEncryptedTopicDTO';
