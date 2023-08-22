@@ -122,10 +122,6 @@ footer {
   margin-bottom: 0px;
 }
 
-.rst-versions .rst-current-version {
-  display: none;
-}
-
 /* Custom admonition */
 .rst-content .quest {
   background-color: rgba(43, 155, 70, 0.1);
