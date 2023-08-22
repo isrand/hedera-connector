@@ -5,7 +5,7 @@ extra_css:
     - css/css.css
 nav:
     - Home: index.md
-    - Getting Started:
+    - 🚀 Getting Started:
         - Setup: getting-started/setup.md
         - Installation: getting-started/installation.md
         - Swagger: getting-started/swagger.md

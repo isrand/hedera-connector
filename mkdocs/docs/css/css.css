@@ -52,7 +52,6 @@ p > a:after {
   color: #1e1e1e;
 }
 
-
 a {
   color: #1e1e1e;
 }
@@ -67,11 +66,13 @@ footer {
 }
 
 .wy-nav-content-wrap {
-  background: #fcfcfc;
+  background: rgba(0,0,0,.05);
 }
 
 .wy-nav-content{
   max-width: 1000px;
+  margin: 0;
+  height: 100%;
 }
 
 .wy-breadcrumbs {
