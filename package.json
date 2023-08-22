@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "buildDocs": "npm run generateOpenAPISpec && cd mkdocs && mkdocs build -d ../docs",
-    "generateOpenAPISpec": "npm run build && node dist/utils/OpenAPISpecProvider.js './mkdocs/docs/assets/openapi.json'",
+    "generateOpenAPISpec": "npm run build && ls && node dist/utils/OpenAPISpecProvider.js './mkdocs/docs/assets/openapi.json'",
     "buildDockerImage": "nest build && docker build -t localhost:5000/hedera-connector:1.0.0 .",
     "generateKyberKeys": "node utils/kyber/generate-keys.js",
     "push": "docker push localhost:5000/hedera-connector:1.0.0",
