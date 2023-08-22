@@ -2,10 +2,10 @@ import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
 import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
 import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
-import {SendMessageToEncryptedTopicDTO} from './dtos/SendMessageToEncryptedTopicDTO';
 import {Configuration} from '../../../configuration/Configuration';
 import {EncryptedTopicService} from './EncryptedTopicService';
 import {ITopicConfiguration} from './interfaces/ITopicConfiguration';
+import { SendMessageToTopicDTO } from "../topic/dtos/SendMessageToTopicDTO";
 
 @ApiTags('Encrypted Topic')
 @Controller()
@@ -71,7 +71,7 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
   })
   @Post('/encryptedtopic/:id/message')
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  public async sendMessageToEncryptedTopic(@Param('id') topicId: string, @Body() message: SendMessageToEncryptedTopicDTO, @Query('accountId') accountId?: string): Promise<unknown> {
+  public async sendMessageToEncryptedTopic(@Param('id') topicId: string, @Body() message: SendMessageToTopicDTO, @Query('accountId') accountId?: string): Promise<unknown> {
     return await this.encryptedTopicService.sendMessageToEncryptedTopic(topicId, message.message, accountId);
   }
 
