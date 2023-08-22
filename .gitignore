@@ -37,3 +37,4 @@ lerna-debug.log*
 chart/charts/hedera-connector/artifacts
 
 chart/values.yaml
+docs
