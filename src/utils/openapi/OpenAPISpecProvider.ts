@@ -18,10 +18,10 @@ export class Main {
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   private sanitizeSpec(spec: OpenAPIObject): string {
-    const stringifiedOpenAPISpec = JSON.stringify(spec);
+    let stringifiedOpenAPISpec = JSON.stringify(spec);
 
-    stringifiedOpenAPISpec.replaceAll('undefined', '0.0.1234');
-    stringifiedOpenAPISpec.replaceAll('a ccount', 'account');
+    stringifiedOpenAPISpec = stringifiedOpenAPISpec.replaceAll('undefined', '0.0.1234');
+    stringifiedOpenAPISpec = stringifiedOpenAPISpec.replaceAll('a ccount', 'account');
 
     return stringifiedOpenAPISpec;
   }
