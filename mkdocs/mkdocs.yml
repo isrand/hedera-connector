@@ -17,3 +17,5 @@ theme:
   logo: img/logo.png
 markdown_extensions:
   - markdown.extensions.admonition
+plugins:
+  - open-in-new-tab
