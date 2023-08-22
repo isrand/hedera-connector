@@ -31,6 +31,13 @@ jobs:
     steps:
       - name: Create and push documentation
         run: |
+          apt update
+          apt install python3-pip -y
+          
+          cd mkdocs;
+          for val in $(mkdocs get-deps); do pip3 install $val; done
+          cd ..
+          
           npm run buildDocs
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
