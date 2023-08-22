@@ -79,7 +79,7 @@ export class EncryptedFileService {
 
     const newEncryptedFileObject = new Kyber(encryptedFileObject.s).encryptData(accessList.participants, decryptedFileContents);
 
-    const fileCombinations: IEncryptedObject = lodash.merge<IEncryptedObject, IEncryptedObject>(encryptedFileObject, newEncryptedFileObject) as IEncryptedObject;
+    const fileCombinations: IEncryptedObject = lodash.merge<IEncryptedObject, IEncryptedObject>(encryptedFileObject, newEncryptedFileObject);
 
     const fileCombinationsBase64 = Buffer.from(JSON.stringify(fileCombinations)).toString('base64');
 
