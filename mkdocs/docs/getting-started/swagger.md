@@ -4,12 +4,3 @@
     }
 </style>
 <swagger-ui supportedSubmitMethods="[]" id="swagger-stuff" src="https://petstore.swagger.io/v2/swagger.json" scrolling="yes"/>
-
-<script>
-    window.onload = function() {
-        let iframeId = document.querySelector("iframe").id;
-        let iframe = document.getElementById(iframeId);
-        const doc = iframe.contentWindow.document;
-        doc.body.innerHTML = doc.body.innerHTML + '<style> body { overflow: scroll; } </style>';
-    }
-</script>
