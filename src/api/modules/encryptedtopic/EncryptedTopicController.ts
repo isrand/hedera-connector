@@ -1,5 +1,5 @@
 import {ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
-import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
 import {CreateEncryptedTopicDTO} from './dtos/CreateEncryptedTopicDTO';
 import {IHederaNetworkResponse} from '../../../hedera/responses/interfaces/IHederaNetworkResponse';
 import {SendMessageToEncryptedTopicDTO} from './dtos/SendMessageToEncryptedTopicDTO';
@@ -42,6 +42,21 @@ and any subsequent messages in the topic, ensuring that messages can only be dec
   @Get('/encryptedtopic')
   public async getAllEncryptedTopics(): Promise<Array<ITopicConfiguration>> {
     return await this.encryptedTopicService.getAllEncryptedTopicConfigurations();
+  }
+
+  @ApiOperation({
+    summary: 'Delete encrypted topic.'
+  })
+  @ApiQuery({
+    name: 'accountId',
+    type: String,
+    description: 'Account performing this operation.',
+    required: false,
+    example: Configuration.nodeHederaAccountId
+  })
+  @Delete('/encryptedtopic/:id')
+  public async deleteEncryptedTopic(@Param('id') topicId: string, @Query('accountId') accountId?: string): Promise<IHederaNetworkResponse> {
+    return await this.encryptedTopicService.deleteEncryptedTopic(topicId, accountId);
   }
 
   @ApiOperation({
