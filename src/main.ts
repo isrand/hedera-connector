@@ -1,8 +1,9 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './AppModule';
-import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import {SwaggerModule} from '@nestjs/swagger';
 import {Wallet} from './wallet/Wallet';
 import {EncryptedTopicManager} from './api/modules/encryptedtopic/support/EncryptedTopicManager';
+import {OpenAPIObjectFactory} from './utils/openapi/OpenAPIObjectFactory';
 
 export class Main {
   public async bootstrap(): Promise<void> {
@@ -15,12 +16,7 @@ export class Main {
     // Initialize application
     const app = await NestFactory.create(AppModule);
 
-    // Create Swagger page
-    const documentation = new DocumentBuilder()
-      .setTitle('Hedera Hashgraph Connector')
-      .setVersion('1.0')
-      .build();
-    const swaggerDocument = SwaggerModule.createDocument(app, documentation);
+    const swaggerDocument = SwaggerModule.createDocument(app, new OpenAPIObjectFactory().getOpenAPIObject());
     SwaggerModule.setup('swagger', app, swaggerDocument, {
       customCss: '.topbar {display:none};',
       customSiteTitle: 'Hedera Hashgraph Connector'
