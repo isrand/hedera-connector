@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Setup - Hedera Testnet Connector</title>
+    <title>Setup - Hedera Connector</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -59,7 +59,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../..">Hedera Testnet Connector</a>
+          <a href="../..">Hedera Connector</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -103,11 +103,11 @@ docker run --detach --rm --network=host alpine ash -c &quot;apk add socat &amp;&
 <h3 id="credentials">Credentials</h3>
 <h5 id="couchdb">CouchDB</h5>
 <p>The CouchDB Wallet stores account information in a collection called <code>accounts</code> in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.</p>
-<p>If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the <code>settings.local</code> toggle to false in <code>values.yaml</code>, specify the database URL (without <code>username:password</code>) under <code>couchdb.url</code>, and update the <code>database-credentials.yaml</code> secret with the correct username and password for the database.</p>
+<p>If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the <code>global.settings.local</code> toggle to false in <code>values.yaml</code>, specify the database URL (without <code>username:password</code>) under <code>couchdb.url</code>, and update the <code>username</code> and <code>password</code> keys.</p>
 <h4 id="hedera-account">Hedera Account</h4>
-<blockquote>
+<div class="admonition quest">
 <p>If you don't have a Hedera Hashgraph Testnet account you can create one <a href="https://portal.hedera.com/register">here</a>.</p>
-</blockquote>
+</div>
 <p>The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network.</p>
 <p>You can find your Hedera Account information <a href="https://portal.hedera.com">in the Hedera Portal</a> - use the DER-encoded keys.</p>
 <p>Add your Hedera Account Id, Hedera Public Key and Hedera Private Key in the <code>values.yaml</code> file in the <code>chart</code> directory.</p>
@@ -115,15 +115,19 @@ docker run --detach --rm --network=host alpine ash -c &quot;apk add socat &amp;&
 <p>The Hedera Connector uses a set of <a href="https://pq-crystals.org/kyber/">Crystals-Kyber</a> public / private keys for end-to-end encryption. It makes use of the three key bit sizes: 512, 768, and 1024. Different key sizes are used for flexibility when encrypting data, to reduce the size of the encrypted data and speed up the encryption mechanism.</p>
 <p>You can choose to bootstrap the microservice with these keys in two ways:</p>
 <h5 id="1-start-the-microservice">1. Start the microservice</h5>
-<p>If you want a quick start you can just run the microservice. It will create the keys on bootstrap and place them in its filesystem.</p>
+<p>If you want a quick start you can just run the microservice. It will create the keys on bootstrap and store them in the database. </p>
+<div class="admonition danger">
+<p class="admonition-title">Warning</p>
+<p>Please keep in mind that if you remove all traces of the microservice from your cluster (including database) these keys will be lost. Only use this approach as a method to quickly spin up and test the microservice with keys you won't need later.</p>
+</div>
 <h5 id="2-import-your-own-keys">2. Import your own key(s)</h5>
 <p>If you already have a set of public / private Crystals-Kyber keys you want to use you can choose to start the microservice with these.
 You need to encode in base64 the contents of your keys and place them under the <code>/chart/artifacts</code> folder. The names of the files must be</p>
 <p><code>kyber_&lt;keysize&gt;.priv</code> and <code>kyber_&lt;keysize&gt;.pub</code></p>
 <p>like the following:</p>
-<pre><code>/chart/artifacts/kyber_512.priv | /chart/artifacts/kyber_512.pub
-/chart/artifacts/kyber_768.priv | /chart/artifacts/kyber_768.pub
-/chart/artifacts/kyber_1024.priv | /chart/artifacts/kyber_1024.pub
+<pre><code>/chart/charts/hedera-connector/artifacts/kyber_512.priv | /chart/charts/hedera-connector/artifacts/kyber_512.pub
+/chart/charts/hedera-connector/artifacts/kyber_768.priv | /chart/charts/hedera-connector/artifacts/kyber_768.pub
+/chart/charts/hedera-connector/artifacts/kyber_1024.priv | /chart/charts/hedera-connector/artifacts/kyber_1024.pub
 </code></pre>
 <p>The remaining key sizes that can't be found will be automatically generated when the microservice starts.</p>
 <p>On the other hand, if you don't have your own set of keys you can run <code>npm run generateKyberKeys</code> to create the six files listed above.</p>

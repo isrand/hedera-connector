@@ -35,11 +35,12 @@ docker run --detach --rm --network=host alpine ash -c "apk add socat && socat TC
 
 The CouchDB Wallet stores account information in a collection called `accounts` in the referenced CouchDB instance. By default, when starting the application locally, a CouchDB instance is deployed next to the Hedera Connector pod.
 
-If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the `settings.local` toggle to false in `values.yaml`, specify the database URL (without `username:password`) under `couchdb.url`, and update the `database-credentials.yaml` secret with the correct username and password for the database.
+If you want to make use of a managed database service (like IBM Cloudant or Azure CosmosDB) you will have to set the `global.settings.local` toggle to false in `values.yaml`, specify the database URL (without `username:password`) under `couchdb.url`, and update the `username` and `password` keys.
 
 #### Hedera Account
 
-> If you don't have a Hedera Hashgraph Testnet account you can create one [here](https://portal.hedera.com/register).
+!!! quest ""
+    If you don't have a Hedera Hashgraph Testnet account you can create one [here](https://portal.hedera.com/register).
 
 The Hedera Connector uses an Account's information (Account Id, Hedera Public Key and Hedera Private Key) and Crystals-Kyber key pair to perform transactions and queries on the network.
 
@@ -55,7 +56,10 @@ You can choose to bootstrap the microservice with these keys in two ways:
 
 ##### 1. Start the microservice
 
-If you want a quick start you can just run the microservice. It will create the keys on bootstrap and place them in its filesystem.
+If you want a quick start you can just run the microservice. It will create the keys on bootstrap and store them in the database. 
+
+!!! danger "Warning"
+    Please keep in mind that if you remove all traces of the microservice from your cluster (including database) these keys will be lost. Only use this approach as a method to quickly spin up and test the microservice with keys you won't need later.
 
 ##### 2. Import your own key(s)
 
@@ -67,9 +71,9 @@ You need to encode in base64 the contents of your keys and place them under the 
 like the following:
 
 ```
-/chart/artifacts/kyber_512.priv | /chart/artifacts/kyber_512.pub
-/chart/artifacts/kyber_768.priv | /chart/artifacts/kyber_768.pub
-/chart/artifacts/kyber_1024.priv | /chart/artifacts/kyber_1024.pub
+/chart/charts/hedera-connector/artifacts/kyber_512.priv | /chart/charts/hedera-connector/artifacts/kyber_512.pub
+/chart/charts/hedera-connector/artifacts/kyber_768.priv | /chart/charts/hedera-connector/artifacts/kyber_768.pub
+/chart/charts/hedera-connector/artifacts/kyber_1024.priv | /chart/charts/hedera-connector/artifacts/kyber_1024.pub
 ```
 
 The remaining key sizes that can't be found will be automatically generated when the microservice starts.
