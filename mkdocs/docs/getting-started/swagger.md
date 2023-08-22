@@ -10,12 +10,6 @@
         let iframeId = document.querySelector("iframe").id;
         let iframe = document.getElementById(iframeId);
         const doc = iframe.contentWindow.document;
-        let style = 
-          'body {' +
-          '  overflow: scroll;' +
-          '}';
-        doc.open();
-        doc.write(style);
-        doc.close();
+        doc.body.innerHTML = doc.body.innerHTML + '<style> body { overflow: scroll; } </style>';
     }
 </script>
