@@ -8,7 +8,9 @@ nav:
     - 🚀 Getting Started:
         - Setup: getting-started/setup.md
         - Installation: getting-started/installation.md
-        - Swagger: getting-started/swagger.md
+    - 📖 Reference:
+        - Swagger: reference/swagger.md
+
 theme:
   name: readthedocs
   prev_next_buttons_location: hidden
