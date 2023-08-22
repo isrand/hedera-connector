@@ -1,4 +1,6 @@
 site_name: Hedera Connector
+site_description: "Documentation for the Hedera Connector microservice"
+repo_url: https://github.com/isrand/hedera-connector
 extra_css:
     - css/css.css
 nav:
