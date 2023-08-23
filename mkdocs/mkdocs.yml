@@ -14,7 +14,7 @@ nav:
 theme:
   name: readthedocs
   prev_next_buttons_location: hidden
-  titles_only: true
+  titles_only: false
   site_name: Hedera Connector
   include_homepage_in_sidebar: true
   logo: img/logo.png
