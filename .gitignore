@@ -38,3 +38,4 @@ chart/charts/hedera-connector/artifacts
 
 chart/values.yaml
 docs
+mkdocs/docs/assets/openapi.json
