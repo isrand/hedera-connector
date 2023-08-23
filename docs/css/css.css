@@ -1,0 +1,184 @@
+.wy-nav-top {
+  background: #fcfcfc;
+  font-size: 0;
+  background-size: 265px 37px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+h3 {
+  font-weight: normal;
+}
+
+h4 {
+  font-weight: 100;
+}
+
+.wy-nav-top i {
+  color: #1e1e1e;
+  padding: 25px;
+}
+
+body {
+  text-align: justify;
+}
+
+.rst-content code {
+  color: #1e1e1e;
+  padding: 5px 8px;
+}
+
+p > a:after {
+  content: url("../img/external.png");
+  padding: 5px 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .wy-side-nav-search .wy-dropdown > a, .wy-side-nav-search > a {
+    display: none;
+  }
+}
+
+.wy-side-nav-search {
+  display: block;
+  background: rgb(0,0,0);
+  background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 15%, rgba(37,0,75,1) 100%, rgba(128,0,255,1) 100%, rgba(65,21,101,1) 100%);
+  text-align: center;
+}
+
+.wy-side-nav-search .wy-dropdown > a:hover, .wy-side-nav-search > a:hover {
+  color: #1e1e1e;
+}
+
+a {
+  color: #1e1e1e;
+}
+
+a:visited {
+  color: #1e1e1e;
+}
+
+footer {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.wy-nav-content-wrap {
+  background: rgba(0,0,0,.05);
+}
+
+.wy-nav-content{
+  max-width: 1000px;
+  margin: 0;
+  height: 100%;
+}
+
+.wy-breadcrumbs {
+  visibility: hidden;
+  display: none;
+}
+
+.rst-content [role=navigation] hr {
+  display: none;
+}
+
+.wy-side-nav-search img {
+  padding: 0px;
+  border: none;
+}
+
+.wy-side-nav-search img:hover {
+  border: none;
+}
+
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+  color: #ffffff
+}
+
+.wy-menu-vertical a {
+  color: #aaaaaa
+}
+
+.wy-side-nav-search input[type="text"] {
+  display: none;
+}
+
+.wy-side-nav-search .wy-dropdown > a, .wy-side-nav-search > a {
+  color: #020000;
+  font-size: 100%;
+  font-weight: 700;
+  display: inline-block;
+  padding: 4px 6px;
+  margin-bottom: 0px;
+  max-width: 100%;
+  border: none;
+}
+
+.wy-side-nav-search > div.version {
+  font-size: 16px;
+  margin-bottom: 0px;
+  margin-top: 5px;
+}
+
+/* Custom admonition */
+.rst-content .quest {
+  background-color: rgba(43, 155, 70, 0.1);
+}
+
+.rst-content .quest > .admonition-title,
+.rst-content .quest > summary {
+  background-color: rgb(68, 206, 100);
+}
+
+.rst-content .quest > .admonition-title::before,
+.rst-content .quest > summary::before {
+  display: none;
+  background-color: rgb(68, 206, 100);
+}
+
+/* Hide admonition (!) logo */
+.rst-content .danger > .admonition-title::before,
+.rst-content .danger > summary::before {
+  display: none;
+}
+
+.rst-content .info > .admonition-title::before,
+.rst-content .info > summary::before {
+  display: none;
+}
+
+/* Change admonition font weight */
+.rst-content .danger > .admonition-title {
+  font-weight: 100;
+  text-align: left;
+}
+
+.rst-content .info > .admonition-title {
+  font-weight: 100;
+  text-align: left;
+}
+
+.swagger-ui-iframe {
+  display: block;  /* iframes are inline by default */
+  height: 100vh;  /* Set height to 100% of the viewport height */
+  width: 100vw;  /* Set width to 100% of the viewport width */
+  border: none; /* Remove default border */
+}
+
+#f12cc8c2 {
+  overflow: scroll;
+}
+
+.swagger-ui-iframe > html > body {
+  overflow: scroll;
+}
