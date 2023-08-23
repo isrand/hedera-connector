@@ -5,9 +5,8 @@ extra_css:
     - css/css.css
 nav:
     - Home: index.md
-    - 🚀 Getting Started:
-        - Setup: getting-started/setup.md
-        - Installation: getting-started/installation.md
+    - 🛠️ Setup:
+        - From source code: setup/source.md
     - 📖 Reference:
         - API: reference/api.md
 
