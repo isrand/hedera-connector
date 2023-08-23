@@ -11,9 +11,11 @@ export class Main {
 
     const openAPISpec = SwaggerModule.createDocument(app, new OpenAPIObjectFactory().getOpenAPIObject());
 
-    const path = String(process.argv[2]);
+    if (!fs.existsSync('./mkdocs/docs/assets')) {
+      fs.mkdirSync('./mkdocs/docs/assets');
+    }
 
-    fs.writeFileSync(path, this.sanitizeSpec(openAPISpec));
+    fs.writeFileSync('./mkdocs/docs/assets/openapi.json', this.sanitizeSpec(openAPISpec));
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
