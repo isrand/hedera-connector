@@ -22,3 +22,5 @@ markdown_extensions:
 plugins:
   - open-in-new-tab
   - swagger-ui-tag
+extra:
+  version: !ENV VERSION
