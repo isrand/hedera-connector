@@ -1,9 +1,8 @@
 name: development
 on:
-  pull_request:
+  push:
     branches:
       - development
-    types: [closed]
 
 permissions:
   contents: write
