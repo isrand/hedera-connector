@@ -46,6 +46,8 @@ jobs:
           for val in $(mkdocs get-deps); do pip3 install $val; done
           cd ..
           
+          export VERSION=latest:$(git rev-parse --short HEAD)
+          
           npm run buildDocs
           
           git config user.name github-actions[bot]
