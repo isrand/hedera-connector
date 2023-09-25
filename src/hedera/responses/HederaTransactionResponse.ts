@@ -7,7 +7,7 @@ import {
   TransactionResponseJSON,
   Transfer
 } from '@hashgraph/sdk';
-import * as Long from 'long';
+import Long from 'long';
 import {IParsedTransactionReceipt} from './interfaces/IParsedTransactionReceipt';
 import {IParsedTransactionRecord} from './interfaces/IParsedTransactionRecord';
 
@@ -43,7 +43,7 @@ export class HederaTransactionResponse {
       topicRunningHash: receipt.topicRunningHash ? this.parseUint8Array(receipt.topicRunningHash) : undefined,
       totalSupply: this.parseLongLong(Long.fromNumber(Number(receipt.totalSupply))),
       scheduledTransactionId: receipt.scheduledTransactionId ? receipt.scheduledTransactionId.toString() : undefined,
-      serials: this.parseArray(receipt.serials),
+      serials: receipt.serials as Array<Long>,
       duplicates: this.parseArray(receipt.duplicates),
       children: this.parseArray(receipt.children)
     };
@@ -83,7 +83,7 @@ export class HederaTransactionResponse {
   }
 
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  private parseLongLong(longLong: Long.Long): number | undefined {
+  private parseLongLong(longLong: Long): number | undefined {
     if (longLong.low !== 0 || longLong.high !== 0) {
       return longLong.toNumber();
     }
@@ -99,7 +99,8 @@ export class HederaTransactionResponse {
     return Buffer.from(array.buffer).toString();
   }
 
-  private parseArray<T>(array: ReadonlyArray<T>): ReadonlyArray<T> | undefined {
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+  private parseArray<T>(array: Array<T>): Array<T> | undefined {
     if (array.length === 0) {
       return undefined;
     }

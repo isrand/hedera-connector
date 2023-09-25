@@ -1,4 +1,4 @@
-import * as nano from 'nano';
+import nano from 'nano';
 
 export class CouchDBAdapter {
   private readonly databaseConnector: nano.ServerScope;

@@ -1,5 +1,5 @@
 import {ContractId, TransactionReceipt} from '@hashgraph/sdk';
-import * as Long from 'long';
+import Long from 'long';
 
 export interface IParsedTransactionReceipt {
   status: string;
@@ -13,7 +13,7 @@ export interface IParsedTransactionReceipt {
   topicRunningHash: string | undefined;
   totalSupply: number | undefined;
   scheduledTransactionId: string | undefined;
-  serials: ReadonlyArray<Long.Long> | undefined;
+  serials: Array<Long>;
   duplicates: ReadonlyArray<TransactionReceipt> | undefined;
   children: ReadonlyArray<TransactionReceipt> | undefined;
 }

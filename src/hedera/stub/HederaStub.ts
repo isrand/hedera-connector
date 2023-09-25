@@ -21,7 +21,7 @@ import {IHederaTransactionResponse} from '../responses/interfaces/IHederaTransac
 import {IHederaStub} from './interfaces/IHederaStub';
 import {IGetMessageFromTopicResponse} from '../../api/modules/topic/responses/IGetMessageFromTopicResponse';
 import {InternalServerErrorException} from '@nestjs/common';
-import * as Long from 'long';
+import Long from 'long';
 import {IHederaCreateAccountResponse} from '../responses/interfaces/IHederaCreateAccountResponse';
 import {Account} from '../../wallet/support/Account';
 

@@ -2,7 +2,7 @@ import {SubscribeMessage, WebSocketGateway} from '@nestjs/websockets';
 import {Socket} from 'socket.io';
 import {TopicMessage, TopicMessageQuery} from '@hashgraph/sdk';
 import {HederaStub} from '../../../hedera/stub/HederaStub';
-import * as Long from 'long';
+import Long from 'long';
 import {Wallet} from '../../../wallet/Wallet';
 import {Configuration} from '../../../configuration/Configuration';
 import {EncryptedTopicService} from './EncryptedTopicService';
